@@ -1,3 +1,5 @@
-/.idea
 *.swp
+/.idea
+/dist
 node_modules
+npm-debug.log
