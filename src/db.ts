@@ -1,12 +1,48 @@
+/// <reference path="redux.d.ts" />
 /// <reference path="collection.ts" />
 
+declare var require
+const redux = require("redux")
+
 module reduxdb {
+    interface ReduxStore {
+        subscribe(any)
+        dispatch(any)
+    }
+
     export class DB {
         private __name__: string
-        private __collections__: Object = {}
+        __collections__: Map<string, Collection> = new Map()
+        __store__: ReduxStore
 
         constructor(name: string) {
             this.__name__= name
+            let reducer = redux.combineReducers({
+                all: (_, {ns, action, query, doc, option}) => {
+                    this.__collections__.forEach(collection => {
+                        if (collection.getFullName() === ns) {
+                            switch (action) {
+                                case "insert":
+                                    collection.__insert__(doc)
+                                    break
+                                case "remove":
+                                    collection.__remove__(query)
+                                    break
+                                case "save":
+                                    collection.__save__(doc)
+                                    break
+                                case "update":
+                                    collection.__update__(query, doc, option)
+                                    break
+                                default:
+                                    break
+                            }
+                        }
+                    })
+                    return this.__collections__
+                }
+            })
+            this.__store__ = redux.createStore(reducer)
         }
 
         createCollection(name: string, option?: CollectionOption): Object {
@@ -14,7 +50,7 @@ module reduxdb {
                 return {"ok": 0, "errmsg": "collection already exists"}
             } else {
                 this[name] = new Collection(this, name, option)
-                this.__collections__[name] = this[name]
+                this.__collections__.set(name, this[name])
                 return {"ok": 1}
             }
         }
@@ -22,11 +58,13 @@ module reduxdb {
         getCollection(name: string): Collection {
             if (!name) throw "Error: collection constructor called with undefined argument"
             this.createCollection(name)
-            return this.__collections__[name]
+            return this.__collections__.get(name)
         }
 
         getCollectionNames(): string[] {
-            return Object.keys(this.__collections__)
+            let result = []
+            this.__collections__.forEach((_, k) => result.push(k))
+            return result
         }
 
         getName(): string {
@@ -35,15 +73,17 @@ module reduxdb {
 
         stats(): Object {
             let objects = 0
-            Object.keys(this.__collections__).forEach(k =>
-                objects += this.__collections__[k].count()
-            )
+            this.__collections__.forEach(c => objects += c.count())
             return {
                 "db": this.__name__,
-                "collections": Object.keys(this.__collections__).length,
+                "collections": this.__collections__.size,
                 "objects": objects,
                 "ok": 1
             }
+        }
+
+        subscribe(func: any) {
+            this.__store__.subscribe(func)
         }
     }
 }
