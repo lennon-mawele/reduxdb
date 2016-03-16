@@ -274,7 +274,6 @@ var reduxdb;
     }());
     reduxdb.Collection = Collection;
 })(reduxdb || (reduxdb = {}));
-/// <reference path="redux.d.ts" />
 /// <reference path="collection.ts" />
 var redux = require("redux");
 var Map = require("es6-map");

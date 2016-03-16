@@ -1,4 +1,3 @@
-/// <reference path="redux.d.ts" />
 /// <reference path="collection.ts" />
 
 declare var require
