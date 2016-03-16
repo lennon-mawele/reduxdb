@@ -1,17 +1,31 @@
 /// <reference path="db.ts" />
 var reduxdb;
 (function (reduxdb) {
+    var CollectionOption = (function () {
+        function CollectionOption() {
+        }
+        return CollectionOption;
+    }());
+    reduxdb.CollectionOption = CollectionOption;
     var Collection = (function () {
-        function Collection(db, name) {
-            this.db = db;
-            this.name = name;
+        function Collection(db, name, option) {
+            this.__index__ = "_id";
+            this.__data__ = {};
+            this.__db__ = db;
+            this.__name__ = name;
+            if (option) {
+                if (option.index)
+                    this.__index__ = option.index;
+            }
         }
         Collection.prototype.aggregate = function () { };
         Collection.prototype.clean = function () { };
         Collection.prototype.convertToCapped = function () { };
         Collection.prototype.convertToSingleObject = function () { };
         Collection.prototype.copyTo = function () { };
-        Collection.prototype.count = function () { };
+        Collection.prototype.count = function () {
+            return Object.keys(this.__data__).length;
+        };
         Collection.prototype.createIndex = function () { };
         Collection.prototype.dataSize = function () { };
         Collection.prototype.diskStorageStats = function () { };
@@ -84,23 +98,41 @@ var reduxdb;
 (function (reduxdb) {
     var DB = (function () {
         function DB(name) {
-            this.name = name;
+            this.__collections__ = {};
+            this.__name__ = name;
         }
-        DB.prototype.createCollection = function (name) {
+        DB.prototype.createCollection = function (name, option) {
             if (this[name]) {
                 return { "ok": 0, "errmsg": "collection already exists" };
             }
             else {
-                this[name] = new reduxdb.Collection(this, name);
-                this.collections[name] = this[name];
+                this[name] = new reduxdb.Collection(this, name, option);
+                this.__collections__[name] = this[name];
                 return { "ok": 1 };
             }
         };
+        DB.prototype.getCollection = function (name) {
+            if (!name)
+                throw "Error: collection constructor called with undefined argument";
+            this.createCollection(name);
+            return this.__collections__[name];
+        };
+        DB.prototype.getCollectionNames = function () {
+            return Object.keys(this.__collections__);
+        };
+        DB.prototype.getName = function () {
+            return this.__name__;
+        };
         DB.prototype.stats = function () {
+            var _this = this;
+            var objects = 0;
+            Object.keys(this.__collections__).forEach(function (k) {
+                return objects += _this.__collections__[k].count();
+            });
             return {
-                "db": this.name,
-                "collections": Object.keys(this.collections).length,
-                "objects": 31,
+                "db": this.__name__,
+                "collections": Object.keys(this.__collections__).length,
+                "objects": objects,
                 "ok": 1
             };
         };

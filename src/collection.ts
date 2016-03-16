@@ -1,13 +1,22 @@
 /// <reference path="db.ts" />
 
 module reduxdb {
-    export class Collection {
-        db: DB
-        name: string
+    export class CollectionOption {
+        index: string
+    }
 
-        constructor(db: DB, name: string) {
-            this.db = db
-            this.name = name
+    export class Collection {
+        private __db__: DB
+        private __name__: string
+        private __index__: string = "_id"
+        private __data__: Object = {}
+
+        constructor(db: DB, name: string, option: CollectionOption) {
+            this.__db__ = db
+            this.__name__ = name
+            if (option) {
+                if (option.index) this.__index__ = option.index
+            }
         }
 
         aggregate() {}
@@ -20,7 +29,9 @@ module reduxdb {
 
         copyTo() {}
 
-        count() {}
+        count() {
+            return Object.keys(this.__data__).length
+        }
 
         createIndex() {}
 
