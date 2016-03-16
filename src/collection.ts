@@ -23,6 +23,11 @@ module reduxdb {
         index: string
     }
 
+    class CollectionUpdateOption {
+        upsert: boolean = false
+        multi: boolean = false
+    }
+
     export class Collection {
         private __db__: DB
         private __name__: string
@@ -107,20 +112,21 @@ module reduxdb {
             return this.__name__
         }
 
-        insert(doc: Object) {
+        insert(doc: any) {
+            if (!doc) throw "no object passed to insert"
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
-                action: "insert",
+                type: "insert",
                 doc: doc
             })
         }
 
         // mapReduce() {}
 
-        remove(query: Object) {
+        remove(query?: Object) {
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
-                action: "remove",
+                type: "remove",
                 query: query
             })
         }
@@ -139,9 +145,10 @@ module reduxdb {
         }
 
         save(doc: Object) {
+            if (!doc) throw "can't save a null"
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
-                action: "save",
+                type: "save",
                 doc: doc
             })
         }
@@ -154,27 +161,47 @@ module reduxdb {
             }
         }
 
-        update(query, doc, option) {
+        update(query: Object, doc: Object, option?: CollectionUpdateOption) {
+            if (!query) throw "need a query"
+            if (!doc) throw "need an object"
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
-                action: "update",
+                type: "update",
                 query: query,
                 doc: doc,
                 options: option
             })
         }
 
-        __insert__(doc: Object): Object {
+        __insert__(doc_: any): Object {
             let index = this.__index__
-            let key = doc[index] || newObjectID()
-            if (this.__data__[key]) {
-                return {"nInserted": 0, "errmsg": "duplicate key"}
+            let docs = []
+            if (!doc_.length) {
+                docs = [doc_]
             } else {
-                let result = assign({}, doc)
-                result[index] = key
-                this.__data__[key] = result
-                return {"nInserted": 1}
+                docs = doc_
             }
+
+            let keySet = {}
+            let result = null
+            docs.forEach(doc => {
+                let key = doc[index] || newObjectID()
+                if (this.__data__[key] || keySet[key]) {
+                    result = {"nInserted": 0, "errmsg": "duplicate key"}
+                }
+                keySet[key] = true
+            })
+            if (result) return result
+
+            let count = 0
+            docs.forEach(doc => {
+                let key = doc[index] || newObjectID()
+                let newDoc = assign({}, doc)
+                newDoc[index] = key
+                this.__data__[key] = newDoc
+                count += 1
+            })
+            return {"nInserted": count}
         }
 
         __remove__(query: Object): Object {
@@ -189,8 +216,8 @@ module reduxdb {
                 let count = 0
                 values(data).forEach((v, k) => {
                     let ok = true
-                    Object.keys(query).forEach(k => {
-                        if (get(v, k, undefined) !== query[k]) ok = false
+                    Object.keys(query).forEach(q => {
+                        if (get(v, q, undefined) !== query[q]) ok = false
                     })
                     if (ok) {
                         count += 1
@@ -210,6 +237,44 @@ module reduxdb {
             return result
         }
 
-        __update__(query: Object, doc: Object, option?: Object) {}
+        __update__(query: Object, doc: Object, option?: CollectionUpdateOption) {
+            let upsert = false
+            let multi = false
+            if (option) {
+                upsert = option.upsert || false
+                multi = option.multi || false
+            }
+            let nMatched = 0
+            let nUpserted = 0
+            let nModified = 0
+            let index = this.__index__
+            values(this.__data__).forEach(v => {
+                let ok = true
+                Object.keys(query).forEach(q => {
+                    if (get(v, q, undefined) !== query[q]) ok = false
+                })
+                if (ok) {
+                    if (multi || nModified < 1) {
+                        let newDoc = assign({}, doc)
+                        newDoc[index] = v[index]
+                        this.__data__[v[index]] = newDoc
+                        nMatched += 1
+                        nModified += 1
+                    }
+                }
+            })
+            if (nModified === 0 && upsert) {
+                let newDoc = assign({}, doc)
+                let key = doc[index] || newObjectID()
+                newDoc[index] = key
+                this.__data__[key] = newDoc
+                nUpserted = 1
+            }
+            return {
+                "nMatched": nMatched,
+                "nUpserted": nUpserted,
+                "nModified": nModified
+            }
+        }
     }
 }

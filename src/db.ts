@@ -3,11 +3,20 @@
 
 declare var require
 const redux = require("redux")
+const Map = require("es6-map")
 
 module reduxdb {
     interface ReduxStore {
         subscribe(any)
         dispatch(any)
+    }
+
+    interface Map<K, V> {
+        get(k)
+        set(k, v)
+        delete(k)
+        forEach(f)
+        size()
     }
 
     export class DB {
@@ -18,10 +27,10 @@ module reduxdb {
         constructor(name: string) {
             this.__name__= name
             let reducer = redux.combineReducers({
-                all: (_, {ns, action, query, doc, option}) => {
+                all: (_, {ns, type, query, doc, option}) => {
                     this.__collections__.forEach(collection => {
                         if (collection.getFullName() === ns) {
-                            switch (action) {
+                            switch (type) {
                                 case "insert":
                                     collection.__insert__(doc)
                                     break
@@ -56,7 +65,7 @@ module reduxdb {
         }
 
         getCollection(name: string): Collection {
-            if (!name) throw "Error: collection constructor called with undefined argument"
+            if (!name) throw "Collection constructor called with undefined argument"
             this.createCollection(name)
             return this.__collections__.get(name)
         }

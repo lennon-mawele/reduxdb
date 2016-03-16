@@ -1,25 +1,35 @@
 /// <reference path="db.ts" />
-const assign = require("object-assign");
-const { get } = require("object-path");
+var assign = require("object-assign");
+var get = require("object-path").get;
 var reduxdb;
 (function (reduxdb) {
     function values(o) {
-        return Object.keys(o).map(k => o[k]);
+        return Object.keys(o).map(function (k) { return o[k]; });
     }
     function newObjectID() {
-        let hex = "0123456789abcdef";
-        let id = [];
-        for (let i = 0; i < 24; i++) {
-            let k = Math.floor(Math.random() * 16);
+        var hex = "0123456789abcdef";
+        var id = [];
+        for (var i = 0; i < 24; i++) {
+            var k = Math.floor(Math.random() * 16);
             id.push(hex.charAt(k));
         }
         return id.join("");
     }
-    class CollectionOption {
-    }
+    var CollectionOption = (function () {
+        function CollectionOption() {
+        }
+        return CollectionOption;
+    }());
     reduxdb.CollectionOption = CollectionOption;
-    class Collection {
-        constructor(db, name, option) {
+    var CollectionUpdateOption = (function () {
+        function CollectionUpdateOption() {
+            this.upsert = false;
+            this.multi = false;
+        }
+        return CollectionUpdateOption;
+    }());
+    var Collection = (function () {
+        function Collection(db, name, option) {
             this.__index__ = "_id";
             this.__data__ = {};
             this.__db__ = db;
@@ -29,22 +39,22 @@ var reduxdb;
                     this.__index__ = option.index;
             }
         }
-        copyTo(newCollection) {
-            let result = this.__db__.createCollection(newCollection, {
+        Collection.prototype.copyTo = function (newCollection) {
+            var result = this.__db__.createCollection(newCollection, {
                 index: this.__index__
             });
             if (result["ok"] === 1) {
-                let collection = this.__db__.getCollection(newCollection);
+                var collection = this.__db__.getCollection(newCollection);
                 assign(collection.__data__, this.__data__);
             }
-        }
-        count() {
+        };
+        Collection.prototype.count = function () {
             return Object.keys(this.__data__).length;
-        }
+        };
         // distinct(field: string) {}
-        drop() {
-            let db = this.__db__;
-            let name = this.__name__;
+        Collection.prototype.drop = function () {
+            var db = this.__db__;
+            var name = this.__name__;
             if (db.__collections__.get(name)) {
                 db.__collections__.delete(name);
                 delete db[name];
@@ -53,9 +63,9 @@ var reduxdb;
             else {
                 return false;
             }
-        }
-        find(query) {
-            let data = this.__data__;
+        };
+        Collection.prototype.find = function (query) {
+            var data = this.__data__;
             if (query === undefined) {
                 return values(data);
             }
@@ -63,54 +73,56 @@ var reduxdb;
                 return [];
             }
             else {
-                let result = [];
-                values(data).forEach(v => {
-                    let ok = true;
-                    Object.keys(query).forEach(k => {
+                var result_1 = [];
+                values(data).forEach(function (v) {
+                    var ok = true;
+                    Object.keys(query).forEach(function (k) {
                         if (get(v, k, undefined) !== query[k])
                             ok = false;
                     });
                     if (ok)
-                        result.push(v);
+                        result_1.push(v);
                 });
-                return result;
+                return result_1;
             }
-        }
-        findOne(query) {
-            let result = this.find(query);
+        };
+        Collection.prototype.findOne = function (query) {
+            var result = this.find(query);
             return result.length === 0 ? null : result[0];
-        }
-        getDB() {
+        };
+        Collection.prototype.getDB = function () {
             return this.__db__;
-        }
-        getFullName() {
+        };
+        Collection.prototype.getFullName = function () {
             return this.__db__.getName() + "." + this.__name__;
-        }
-        getIndexKeys() {
-            let result = [{}];
+        };
+        Collection.prototype.getIndexKeys = function () {
+            var result = [{}];
             result[0][this.__index__] = 1;
             return result;
-        }
-        getName() {
+        };
+        Collection.prototype.getName = function () {
             return this.__name__;
-        }
-        insert(doc) {
+        };
+        Collection.prototype.insert = function (doc) {
+            if (!doc)
+                throw "no object passed to insert";
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
-                action: "insert",
+                type: "insert",
                 doc: doc
             });
-        }
+        };
         // mapReduce() {}
-        remove(query) {
+        Collection.prototype.remove = function (query) {
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
-                action: "remove",
+                type: "remove",
                 query: query
             });
-        }
-        renameCollection(newName) {
-            let db = this.__db__;
+        };
+        Collection.prototype.renameCollection = function (newName) {
+            var db = this.__db__;
             if (db[newName]) {
                 return { "ok": 0, "errmsg": "target namespace exists" };
             }
@@ -121,47 +133,71 @@ var reduxdb;
                 db.__collections__.delete(this.__name__);
                 this.__name__ = newName;
             }
-        }
-        save(doc) {
+        };
+        Collection.prototype.save = function (doc) {
+            if (!doc)
+                throw "can't save a null";
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
-                action: "save",
+                type: "save",
                 doc: doc
             });
-        }
-        stats() {
+        };
+        Collection.prototype.stats = function () {
             return {
                 "ns": this.getFullName(),
                 "count": this.count(),
                 "ok": 1
             };
-        }
-        update(query, doc, option) {
+        };
+        Collection.prototype.update = function (query, doc, option) {
+            if (!query)
+                throw "need a query";
+            if (!doc)
+                throw "need an object";
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
-                action: "update",
+                type: "update",
                 query: query,
                 doc: doc,
                 options: option
             });
-        }
-        __insert__(doc) {
-            let index = this.__index__;
-            let key = doc[index] || newObjectID();
-            if (this.__data__[key]) {
-                return { "nInserted": 0, "errmsg": "duplicate key" };
+        };
+        Collection.prototype.__insert__ = function (doc_) {
+            var _this = this;
+            var index = this.__index__;
+            var docs = [];
+            if (!doc_.length) {
+                docs = [doc_];
             }
             else {
-                let result = assign({}, doc);
-                result[index] = key;
-                this.__data__[key] = result;
-                return { "nInserted": 1 };
+                docs = doc_;
             }
-        }
-        __remove__(query) {
-            let data = this.__data__;
+            var keySet = {};
+            var result = null;
+            docs.forEach(function (doc) {
+                var key = doc[index] || newObjectID();
+                if (_this.__data__[key] || keySet[key]) {
+                    result = { "nInserted": 0, "errmsg": "duplicate key" };
+                }
+                keySet[key] = true;
+            });
+            if (result)
+                return result;
+            var count = 0;
+            docs.forEach(function (doc) {
+                var key = doc[index] || newObjectID();
+                var newDoc = assign({}, doc);
+                newDoc[index] = key;
+                _this.__data__[key] = newDoc;
+                count += 1;
+            });
+            return { "nInserted": count };
+        };
+        Collection.prototype.__remove__ = function (query) {
+            var data = this.__data__;
             if (query === undefined) {
-                let result = { "nRemoved": this.count() };
+                var result = { "nRemoved": this.count() };
                 this.__data__ = {};
                 return result;
             }
@@ -169,48 +205,92 @@ var reduxdb;
                 return { "nRemoved": 0 };
             }
             else {
-                let count = 0;
-                values(data).forEach((v, k) => {
-                    let ok = true;
-                    Object.keys(query).forEach(k => {
-                        if (get(v, k, undefined) !== query[k])
+                var count_1 = 0;
+                values(data).forEach(function (v, k) {
+                    var ok = true;
+                    Object.keys(query).forEach(function (q) {
+                        if (get(v, q, undefined) !== query[q])
                             ok = false;
                     });
                     if (ok) {
-                        count += 1;
+                        count_1 += 1;
                         delete data[k];
                     }
                 });
-                return { "nRemoved": count };
+                return { "nRemoved": count_1 };
             }
-        }
-        __save__(doc) {
-            let index = this.__index__;
-            let result = assign({}, doc);
+        };
+        Collection.prototype.__save__ = function (doc) {
+            var index = this.__index__;
+            var result = assign({}, doc);
             if (!result[index])
                 result[index] = newObjectID();
-            let key = result[index];
+            var key = result[index];
             this.__data__[key] = result;
             return result;
-        }
-        __update__(query, doc, option) { }
-    }
+        };
+        Collection.prototype.__update__ = function (query, doc, option) {
+            var _this = this;
+            var upsert = false;
+            var multi = false;
+            if (option) {
+                upsert = option.upsert || false;
+                multi = option.multi || false;
+            }
+            var nMatched = 0;
+            var nUpserted = 0;
+            var nModified = 0;
+            var index = this.__index__;
+            values(this.__data__).forEach(function (v) {
+                var ok = true;
+                Object.keys(query).forEach(function (q) {
+                    if (get(v, q, undefined) !== query[q])
+                        ok = false;
+                });
+                if (ok) {
+                    if (multi || nModified < 1) {
+                        var newDoc = assign({}, doc);
+                        newDoc[index] = v[index];
+                        _this.__data__[v[index]] = newDoc;
+                        nMatched += 1;
+                        nModified += 1;
+                    }
+                }
+            });
+            if (nModified === 0 && upsert) {
+                var newDoc = assign({}, doc);
+                var key = doc[index] || newObjectID();
+                newDoc[index] = key;
+                this.__data__[key] = newDoc;
+                nUpserted = 1;
+            }
+            return {
+                "nMatched": nMatched,
+                "nUpserted": nUpserted,
+                "nModified": nModified
+            };
+        };
+        return Collection;
+    }());
     reduxdb.Collection = Collection;
 })(reduxdb || (reduxdb = {}));
 /// <reference path="redux.d.ts" />
 /// <reference path="collection.ts" />
-const redux = require("redux");
+var redux = require("redux");
+var Map = require("es6-map");
 var reduxdb;
 (function (reduxdb) {
-    class DB {
-        constructor(name) {
+    var DB = (function () {
+        function DB(name) {
+            var _this = this;
             this.__collections__ = new Map();
             this.__name__ = name;
-            let reducer = redux.combineReducers({
-                all: (_, { ns, action, query, doc, option }) => {
-                    this.__collections__.forEach(collection => {
+            var reducer = redux.combineReducers({
+                all: function (_, _a) {
+                    var ns = _a.ns, type = _a.type, query = _a.query, doc = _a.doc, option = _a.option;
+                    _this.__collections__.forEach(function (collection) {
                         if (collection.getFullName() === ns) {
-                            switch (action) {
+                            switch (type) {
                                 case "insert":
                                     collection.__insert__(doc);
                                     break;
@@ -228,12 +308,12 @@ var reduxdb;
                             }
                         }
                     });
-                    return this.__collections__;
+                    return _this.__collections__;
                 }
             });
             this.__store__ = redux.createStore(reducer);
         }
-        createCollection(name, option) {
+        DB.prototype.createCollection = function (name, option) {
             if (this[name]) {
                 return { "ok": 0, "errmsg": "collection already exists" };
             }
@@ -242,41 +322,42 @@ var reduxdb;
                 this.__collections__.set(name, this[name]);
                 return { "ok": 1 };
             }
-        }
-        getCollection(name) {
+        };
+        DB.prototype.getCollection = function (name) {
             if (!name)
-                throw "Error: collection constructor called with undefined argument";
+                throw "Collection constructor called with undefined argument";
             this.createCollection(name);
             return this.__collections__.get(name);
-        }
-        getCollectionNames() {
-            let result = [];
-            this.__collections__.forEach((_, k) => result.push(k));
+        };
+        DB.prototype.getCollectionNames = function () {
+            var result = [];
+            this.__collections__.forEach(function (_, k) { return result.push(k); });
             return result;
-        }
-        getName() {
+        };
+        DB.prototype.getName = function () {
             return this.__name__;
-        }
-        stats() {
-            let objects = 0;
-            this.__collections__.forEach(c => objects += c.count());
+        };
+        DB.prototype.stats = function () {
+            var objects = 0;
+            this.__collections__.forEach(function (c) { return objects += c.count(); });
             return {
                 "db": this.__name__,
                 "collections": this.__collections__.size,
                 "objects": objects,
                 "ok": 1
             };
-        }
-        subscribe(func) {
+        };
+        DB.prototype.subscribe = function (func) {
             this.__store__.subscribe(func);
-        }
-    }
+        };
+        return DB;
+    }());
     reduxdb.DB = DB;
 })(reduxdb || (reduxdb = {}));
 /// <reference path="db.ts" />
 var reduxdb;
 (function (reduxdb) {
-    let dbs = {};
+    var dbs = {};
     function use(name) {
         if (!dbs[name])
             dbs[name] = new reduxdb.DB(name);
