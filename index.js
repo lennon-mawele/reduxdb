@@ -30,14 +30,14 @@ var reduxdb;
         return CollectionUpdateOption;
     }());
     var Collection = (function () {
-        function Collection(db, name, option) {
+        function Collection(db, name, options) {
             this.__index__ = "_id";
             this.__data__ = {};
             this.__db__ = db;
             this.__name__ = name;
-            if (option) {
-                if (option.index)
-                    this.__index__ = option.index;
+            if (options) {
+                if (options.index)
+                    this.__index__ = options.index;
             }
         }
         Collection.prototype.copyTo = function (newCollection) {
@@ -147,7 +147,7 @@ var reduxdb;
                 "ok": 1
             };
         };
-        Collection.prototype.update = function (query, doc, option) {
+        Collection.prototype.update = function (query, doc, options) {
             if (!query)
                 throw "need a query";
             if (!doc)
@@ -157,7 +157,7 @@ var reduxdb;
                 type: "update",
                 query: query,
                 doc: doc,
-                option: option
+                options: options
             });
         };
         Collection.prototype.__insert__ = function (doc_) {
@@ -227,13 +227,13 @@ var reduxdb;
             this.__data__[key] = result;
             return result;
         };
-        Collection.prototype.__update__ = function (query, doc, option) {
+        Collection.prototype.__update__ = function (query, doc, options) {
             var _this = this;
             var upsert = false;
             var multi = false;
-            if (option) {
-                upsert = option.upsert || false;
-                multi = option.multi || false;
+            if (options) {
+                upsert = options.upsert || false;
+                multi = options.multi || false;
             }
             var nMatched = 0;
             var nUpserted = 0;
@@ -283,7 +283,7 @@ var reduxdb;
             this.__name__ = name;
             var reducer = redux.combineReducers({
                 all: function (_, _a) {
-                    var ns = _a.ns, type = _a.type, query = _a.query, doc = _a.doc, option = _a.option;
+                    var ns = _a.ns, type = _a.type, query = _a.query, doc = _a.doc, options = _a.options;
                     _this.__collections__.forEach(function (collection) {
                         if (collection.getFullName() === ns) {
                             switch (type) {
@@ -297,7 +297,7 @@ var reduxdb;
                                     collection.__save__(doc);
                                     break;
                                 case "update":
-                                    collection.__update__(query, doc, option);
+                                    collection.__update__(query, doc, options);
                                     break;
                                 default:
                                     break;
@@ -309,12 +309,12 @@ var reduxdb;
             });
             this.__store__ = redux.createStore(reducer);
         }
-        DB.prototype.createCollection = function (name, option) {
+        DB.prototype.createCollection = function (name, options) {
             if (this[name]) {
                 return { "ok": 0, "errmsg": "collection already exists" };
             }
             else {
-                this[name] = new reduxdb.Collection(this, name, option);
+                this[name] = new reduxdb.Collection(this, name, options);
                 this.__collections__.set(name, this[name]);
                 return { "ok": 1 };
             }

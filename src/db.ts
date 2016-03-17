@@ -26,7 +26,7 @@ module reduxdb {
         constructor(name: string) {
             this.__name__= name
             let reducer = redux.combineReducers({
-                all: (_, {ns, type, query, doc, option}) => {
+                all: (_, {ns, type, query, doc, options}) => {
                     this.__collections__.forEach(collection => {
                         if (collection.getFullName() === ns) {
                             switch (type) {
@@ -40,7 +40,7 @@ module reduxdb {
                                     collection.__save__(doc)
                                     break
                                 case "update":
-                                    collection.__update__(query, doc, option)
+                                    collection.__update__(query, doc, options)
                                     break
                                 default:
                                     break
@@ -53,11 +53,11 @@ module reduxdb {
             this.__store__ = redux.createStore(reducer)
         }
 
-        createCollection(name: string, option?: CollectionOption): Object {
+        createCollection(name: string, options?: CollectionOption): Object {
             if (this[name]) {
                 return {"ok": 0, "errmsg": "collection already exists"}
             } else {
-                this[name] = new Collection(this, name, option)
+                this[name] = new Collection(this, name, options)
                 this.__collections__.set(name, this[name])
                 return {"ok": 1}
             }

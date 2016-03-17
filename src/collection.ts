@@ -34,11 +34,11 @@ module reduxdb {
         private __index__: string = "_id"
         private __data__: Object = {}
 
-        constructor(db: DB, name: string, option?: CollectionOption) {
+        constructor(db: DB, name: string, options?: CollectionOption) {
             this.__db__ = db
             this.__name__ = name
-            if (option) {
-                if (option.index) this.__index__ = option.index
+            if (options) {
+                if (options.index) this.__index__ = options.index
             }
         }
 
@@ -159,7 +159,7 @@ module reduxdb {
             }
         }
 
-        update(query: Object, doc: Object, option?: CollectionUpdateOption): void {
+        update(query: Object, doc: Object, options?: CollectionUpdateOption): void {
             if (!query) throw "need a query"
             if (!doc) throw "need an object"
             this.__db__.__store__.dispatch({
@@ -167,7 +167,7 @@ module reduxdb {
                 type: "update",
                 query: query,
                 doc: doc,
-                option: option
+                options: options
             })
         }
 
@@ -235,12 +235,12 @@ module reduxdb {
             return result
         }
 
-        __update__(query: Object, doc: Object, option?: CollectionUpdateOption): Object {
+        __update__(query: Object, doc: Object, options?: CollectionUpdateOption): Object {
             let upsert = false
             let multi = false
-            if (option) {
-                upsert = option.upsert || false
-                multi = option.multi || false
+            if (options) {
+                upsert = options.upsert || false
+                multi = options.multi || false
             }
             let nMatched = 0
             let nUpserted = 0
