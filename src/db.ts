@@ -90,7 +90,7 @@ module reduxdb {
             }
         }
 
-        subscribe(func: any) {
+        subscribe(func: any): void {
             this.__store__.subscribe(func)
         }
     }

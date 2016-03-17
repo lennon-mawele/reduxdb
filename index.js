@@ -6,7 +6,7 @@ var reduxdb;
         return Object.keys(o).map(function (k) { return o[k]; });
     }
     reduxdb.values = values;
-    function newObjectID() {
+    function newObjectId() {
         var hex = "0123456789abcdef";
         var id = [];
         for (var i = 0; i < 24; i++) {
@@ -15,7 +15,7 @@ var reduxdb;
         }
         return id.join("");
     }
-    reduxdb.newObjectID = newObjectID;
+    reduxdb.newObjectId = newObjectId;
     var CollectionOption = (function () {
         function CollectionOption() {
         }
@@ -173,7 +173,7 @@ var reduxdb;
             var keySet = {};
             var result = null;
             docs.forEach(function (doc) {
-                var key = doc[index] || newObjectID();
+                var key = doc[index] || newObjectId();
                 if (_this.__data__[key] || keySet[key]) {
                     result = { "nInserted": 0, "errmsg": "duplicate key" };
                 }
@@ -183,7 +183,7 @@ var reduxdb;
                 return result;
             var count = 0;
             docs.forEach(function (doc) {
-                var key = doc[index] || newObjectID();
+                var key = doc[index] || newObjectId();
                 var newDoc = assign({}, doc);
                 newDoc[index] = key;
                 _this.__data__[key] = newDoc;
@@ -222,7 +222,7 @@ var reduxdb;
             var index = this.__index__;
             var result = assign({}, doc);
             if (!result[index])
-                result[index] = newObjectID();
+                result[index] = newObjectId();
             var key = result[index];
             this.__data__[key] = result;
             return result;
@@ -257,7 +257,7 @@ var reduxdb;
             });
             if (nModified === 0 && upsert) {
                 var newDoc = assign({}, doc);
-                var key = doc[index] || newObjectID();
+                var key = doc[index] || newObjectId();
                 newDoc[index] = key;
                 this.__data__[key] = newDoc;
                 nUpserted = 1;

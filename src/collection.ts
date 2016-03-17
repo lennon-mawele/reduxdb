@@ -9,7 +9,7 @@ module reduxdb {
         return Object.keys(o).map(k => o[k])
     }
 
-    export function newObjectID(): string {
+    export function newObjectId(): string {
         let hex = "0123456789abcdef"
         let id = []
         for (let i = 0; i < 24; i++) {
@@ -91,25 +91,25 @@ module reduxdb {
             return result.length === 0 ? null : result[0]
         }
 
-        getDB() {
+        getDB(): DB {
             return this.__db__
         }
 
-        getFullName() {
+        getFullName(): string {
             return this.__db__.getName() + "." + this.__name__
         }
 
-        getIndexKeys() {
+        getIndexKeys(): Object[] {
             let result = [{}]
             result[0][this.__index__] = 1
             return result
         }
 
-        getName() {
+        getName(): string {
             return this.__name__
         }
 
-        insert(doc: any) {
+        insert(doc: any): void {
             if (!doc) throw "no object passed to insert"
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
@@ -120,7 +120,7 @@ module reduxdb {
 
         // mapReduce() {}
 
-        remove(query?: Object) {
+        remove(query?: Object): void {
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
                 type: "remove",
@@ -142,7 +142,7 @@ module reduxdb {
             }
         }
 
-        save(doc: Object) {
+        save(doc: Object): void {
             if (!doc) throw "can't save a null"
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
@@ -151,7 +151,7 @@ module reduxdb {
             })
         }
 
-        stats() {
+        stats(): Object {
             return {
                 "ns" : this.getFullName(),
                 "count" : this.count(),
@@ -159,7 +159,7 @@ module reduxdb {
             }
         }
 
-        update(query: Object, doc: Object, option?: CollectionUpdateOption) {
+        update(query: Object, doc: Object, option?: CollectionUpdateOption): void {
             if (!query) throw "need a query"
             if (!doc) throw "need an object"
             this.__db__.__store__.dispatch({
@@ -183,7 +183,7 @@ module reduxdb {
             let keySet = {}
             let result = null
             docs.forEach(doc => {
-                let key = doc[index] || newObjectID()
+                let key = doc[index] || newObjectId()
                 if (this.__data__[key] || keySet[key]) {
                     result = {"nInserted": 0, "errmsg": "duplicate key"}
                 }
@@ -193,7 +193,7 @@ module reduxdb {
 
             let count = 0
             docs.forEach(doc => {
-                let key = doc[index] || newObjectID()
+                let key = doc[index] || newObjectId()
                 let newDoc = assign({}, doc)
                 newDoc[index] = key
                 this.__data__[key] = newDoc
@@ -229,13 +229,13 @@ module reduxdb {
         __save__(doc: Object): Object {
             let index = this.__index__
             let result = assign({}, doc)
-            if (!result[index]) result[index] = newObjectID()
+            if (!result[index]) result[index] = newObjectId()
             let key = result[index]
             this.__data__[key] = result
             return result
         }
 
-        __update__(query: Object, doc: Object, option?: CollectionUpdateOption) {
+        __update__(query: Object, doc: Object, option?: CollectionUpdateOption): Object {
             let upsert = false
             let multi = false
             if (option) {
@@ -263,7 +263,7 @@ module reduxdb {
             })
             if (nModified === 0 && upsert) {
                 let newDoc = assign({}, doc)
-                let key = doc[index] || newObjectID()
+                let key = doc[index] || newObjectId()
                 newDoc[index] = key
                 this.__data__[key] = newDoc
                 nUpserted = 1
