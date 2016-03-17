@@ -42,17 +42,14 @@ module reduxdb {
             }
         }
 
-        copyTo(newCollection: string) {
-            let result = this.__db__.createCollection(newCollection, {
-                index: this.__index__
-            })
-            if (result["ok"] === 1) {
-                let collection = this.__db__.getCollection(newCollection)
-                assign(collection.__data__, this.__data__)
-            }
+        copyTo(newCollection: string): number {
+            this.__db__.createCollection(newCollection, {index: this.__index__})
+            let collection = this.__db__.getCollection(newCollection)
+            assign(collection.__data__, this.__data__)
+            return this.count()
         }
 
-        count() {
+        count(): number {
             return Object.keys(this.__data__).length
         }
 
@@ -131,7 +128,7 @@ module reduxdb {
             })
         }
 
-        renameCollection(newName: string) {
+        renameCollection(newName: string): Object {
             let db = this.__db__
             if (db[newName]) {
                 return {"ok": 0, "errmsg": "target namespace exists"}
@@ -141,6 +138,7 @@ module reduxdb {
                 delete db[this.__name__]
                 db.__collections__.delete(this.__name__)
                 this.__name__ = newName
+                return {"ok": 1}
             }
         }
 
@@ -169,7 +167,7 @@ module reduxdb {
                 type: "update",
                 query: query,
                 doc: doc,
-                options: option
+                option: option
             })
         }
 

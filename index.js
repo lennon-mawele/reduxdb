@@ -41,13 +41,10 @@ var reduxdb;
             }
         }
         Collection.prototype.copyTo = function (newCollection) {
-            var result = this.__db__.createCollection(newCollection, {
-                index: this.__index__
-            });
-            if (result["ok"] === 1) {
-                var collection = this.__db__.getCollection(newCollection);
-                assign(collection.__data__, this.__data__);
-            }
+            this.__db__.createCollection(newCollection, { index: this.__index__ });
+            var collection = this.__db__.getCollection(newCollection);
+            assign(collection.__data__, this.__data__);
+            return this.count();
         };
         Collection.prototype.count = function () {
             return Object.keys(this.__data__).length;
@@ -131,6 +128,7 @@ var reduxdb;
                 delete db[this.__name__];
                 db.__collections__.delete(this.__name__);
                 this.__name__ = newName;
+                return { "ok": 1 };
             }
         };
         Collection.prototype.save = function (doc) {
@@ -159,7 +157,7 @@ var reduxdb;
                 type: "update",
                 query: query,
                 doc: doc,
-                options: option
+                option: option
             });
         };
         Collection.prototype.__insert__ = function (doc_) {
