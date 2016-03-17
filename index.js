@@ -1,4 +1,3 @@
-/// <reference path="db.ts" />
 var assign = require("object-assign");
 var get = require("object-path").get;
 var reduxdb;
@@ -51,7 +50,6 @@ var reduxdb;
         Collection.prototype.count = function () {
             return Object.keys(this.__data__).length;
         };
-        // distinct(field: string) {}
         Collection.prototype.drop = function () {
             var db = this.__db__;
             var name = this.__name__;
@@ -113,7 +111,6 @@ var reduxdb;
                 doc: doc
             });
         };
-        // mapReduce() {}
         Collection.prototype.remove = function (query) {
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
@@ -274,7 +271,6 @@ var reduxdb;
     }());
     reduxdb.Collection = Collection;
 })(reduxdb || (reduxdb = {}));
-/// <reference path="collection.ts" />
 var redux = require("redux");
 var Map = require("es6-map");
 var reduxdb;
@@ -353,7 +349,6 @@ var reduxdb;
     }());
     reduxdb.DB = DB;
 })(reduxdb || (reduxdb = {}));
-/// <reference path="db.ts" />
 var reduxdb;
 (function (reduxdb) {
     var dbs = {};

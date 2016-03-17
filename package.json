@@ -14,7 +14,7 @@
     "redux": "^3.3.1"
   },
   "scripts": {
-    "build": "tsc --out index.js src/index.ts",
-    "watch": "tsc --out index.js -w src/index.ts"
+    "build": "tsc --removeComments --out index.js src/index.ts",
+    "watch": "tsc --removeComments --out index.js -w src/index.ts"
   }
 }
