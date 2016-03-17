@@ -1,5 +1,6 @@
 *.swp
 /.idea
 /dist
+/test/*.js
 node_modules
 npm-debug.log

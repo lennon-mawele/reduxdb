@@ -1,7 +1,8 @@
-"use strict"
-
-const assert = require("assert")
+/// <reference path="assert.d.ts" />
+import assert = require("assert")
 const deepStrictEqual = assert.deepStrictEqual
+
+declare var require
 const reduxdb = require("../index.js")
 
 function setup(db) {

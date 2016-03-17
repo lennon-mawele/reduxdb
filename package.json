@@ -1,6 +1,6 @@
 {
   "name": "reduxdb",
-  "version": "0.0.2",
+  "version": "0.1.0",
   "main": "index.js",
   "devDependencies": {
     "typescript": "^1.8.7"
@@ -16,6 +16,6 @@
   "scripts": {
     "build": "tsc --removeComments --out index.js src/index.ts",
     "watch": "tsc --removeComments --out index.js -w src/index.ts",
-    "test": "ls test/test_*.js |xargs -I {} node {}"
+    "test": "tsc test/test_*.ts && ls test/test_*.js |xargs -I {} node {}"
   }
 }
