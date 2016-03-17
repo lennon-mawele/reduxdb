@@ -5,11 +5,11 @@ const assign = require("object-assign")
 const { get } = require("object-path")
 
 module reduxdb {
-    function values(o: Object): any[] {
+    export function values(o: Object): any[] {
         return Object.keys(o).map(k => o[k])
     }
 
-    function newObjectID(): string {
+    export function newObjectID(): string {
         let hex = "0123456789abcdef"
         let id = []
         for (let i = 0; i < 24; i++) {
@@ -34,7 +34,7 @@ module reduxdb {
         private __index__: string = "_id"
         private __data__: Object = {}
 
-        constructor(db: DB, name: string, option: CollectionOption) {
+        constructor(db: DB, name: string, option?: CollectionOption) {
             this.__db__ = db
             this.__name__ = name
             if (option) {
@@ -214,14 +214,14 @@ module reduxdb {
                 return {"nRemoved": 0}
             } else {
                 let count = 0
-                values(data).forEach((v, k) => {
+                values(data).forEach(v => {
                     let ok = true
-                    Object.keys(query).forEach(q => {
-                        if (get(v, q, undefined) !== query[q]) ok = false
+                    Object.keys(query).forEach(k => {
+                        if (get(v, k, undefined) !== query[k]) ok = false
                     })
                     if (ok) {
                         count += 1
-                        delete data[k]
+                        delete data[v[this.__index__]]
                     }
                 })
                 return {"nRemoved": count}
@@ -250,8 +250,8 @@ module reduxdb {
             let index = this.__index__
             values(this.__data__).forEach(v => {
                 let ok = true
-                Object.keys(query).forEach(q => {
-                    if (get(v, q, undefined) !== query[q]) ok = false
+                Object.keys(query).forEach(k => {
+                    if (get(v, k, undefined) !== query[k]) ok = false
                 })
                 if (ok) {
                     if (multi || nModified < 1) {

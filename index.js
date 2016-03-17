@@ -5,6 +5,7 @@ var reduxdb;
     function values(o) {
         return Object.keys(o).map(function (k) { return o[k]; });
     }
+    reduxdb.values = values;
     function newObjectID() {
         var hex = "0123456789abcdef";
         var id = [];
@@ -14,6 +15,7 @@ var reduxdb;
         }
         return id.join("");
     }
+    reduxdb.newObjectID = newObjectID;
     var CollectionOption = (function () {
         function CollectionOption() {
         }
@@ -192,6 +194,7 @@ var reduxdb;
             return { "nInserted": count };
         };
         Collection.prototype.__remove__ = function (query) {
+            var _this = this;
             var data = this.__data__;
             if (query === undefined) {
                 var result = { "nRemoved": this.count() };
@@ -203,15 +206,15 @@ var reduxdb;
             }
             else {
                 var count_1 = 0;
-                values(data).forEach(function (v, k) {
+                values(data).forEach(function (v) {
                     var ok = true;
-                    Object.keys(query).forEach(function (q) {
-                        if (get(v, q, undefined) !== query[q])
+                    Object.keys(query).forEach(function (k) {
+                        if (get(v, k, undefined) !== query[k])
                             ok = false;
                     });
                     if (ok) {
                         count_1 += 1;
-                        delete data[k];
+                        delete data[v[_this.__index__]];
                     }
                 });
                 return { "nRemoved": count_1 };
@@ -240,8 +243,8 @@ var reduxdb;
             var index = this.__index__;
             values(this.__data__).forEach(function (v) {
                 var ok = true;
-                Object.keys(query).forEach(function (q) {
-                    if (get(v, q, undefined) !== query[q])
+                Object.keys(query).forEach(function (k) {
+                    if (get(v, k, undefined) !== query[k])
                         ok = false;
                 });
                 if (ok) {

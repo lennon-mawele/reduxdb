@@ -15,6 +15,7 @@
   },
   "scripts": {
     "build": "tsc --removeComments --out index.js src/index.ts",
-    "watch": "tsc --removeComments --out index.js -w src/index.ts"
+    "watch": "tsc --removeComments --out index.js -w src/index.ts",
+    "test": "ls test/test_*.js |xargs -I {} node {}"
   }
 }

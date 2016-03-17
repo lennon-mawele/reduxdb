@@ -6,15 +6,15 @@ const Map = require("es6-map")
 
 module reduxdb {
     interface ReduxStore {
-        subscribe(any)
-        dispatch(any)
+        dispatch(e)
+        subscribe(f)
     }
 
     interface Map<K, V> {
-        get(k)
-        set(k, v)
         delete(k)
         forEach(f)
+        get(k)
+        set(k, v)
         size()
     }
 
