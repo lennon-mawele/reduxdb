@@ -26,19 +26,15 @@ db.user.findOne({name: "wizawu"}).id    // "123"
 
 ### API
 
+This [markdown](https://github.com/wizawu/reduxdb/blob/master/API.md) explains the differences with official API.
+
 #### reduxdb
 
 + use(name)  
-  Return an `reduxdb.DB` object. Create if not exist.
 
 #### reduxdb.DB
 
-+ createCollection(name, options)  
-  `options` can be only used to define index, for example
-  
-  ```
-  db.createCollection("user", {index: "uid"})
-  ```
++ [createCollection(name, options)](https://docs.mongodb.org/manual/reference/method/db.createCollection/)
 + [getCollection(name)](https://docs.mongodb.org/manual/reference/method/db.getCollection/)
 + [getCollectionNames()](https://docs.mongodb.org/manual/reference/method/db.getCollectionNames/)
 + [getName()](https://docs.mongodb.org/manual/reference/method/db.getName/)
@@ -47,44 +43,18 @@ db.user.findOne({name: "wizawu"}).id    // "123"
 
 #### reduxdb.Collection
 
-`insert`, `remove`, `save` and `update` operations would be passed using Redux's events. 
-
 + [copyTo(newCollection)](https://docs.mongodb.org/manual/reference/method/db.collection.copyTo/)
-
 + [count()](https://docs.mongodb.org/manual/reference/method/db.collection.count/)
-
 + [drop()](https://docs.mongodb.org/manual/reference/method/db.collection.drop/)
-
-+ [find(query)](https://docs.mongodb.org/manual/reference/method/db.collection.find/)  
-  See [Query for Equality](https://docs.mongodb.org/manual/reference/method/db.collection.find/), for example
-  
-  ```
-  // Return all users matching {"age": 18, "name": {"first": "Andrew"}}
-  db.user.find({"age": 18, "name.first": "Andrew"})
-  ```
-
-+ [findOne(query)](https://docs.mongodb.org/manual/reference/method/db.collection.findOne/)  
-  Same `query` type as `find()`.
-
++ [find(query)](https://docs.mongodb.org/manual/reference/method/db.collection.find/)
++ [findOne(query)](https://docs.mongodb.org/manual/reference/method/db.collection.findOne/)
 + getDB()
-
 + getFullName()
-
 + getIndexKeys()
-
 + getName()
-
-+ [insert(&lt;document or array of documents>)](https://docs.mongodb.org/manual/reference/method/db.collection.insert/)  
-  No `options` supported here.
-
-+ [remove(query)](https://docs.mongodb.org/manual/reference/method/db.collection.remove/)  
-  Same `query` type as `find()`.
-
++ [insert(documents)](https://docs.mongodb.org/manual/reference/method/db.collection.insert/)
++ [remove(query)](https://docs.mongodb.org/manual/reference/method/db.collection.remove/)
 + [renameCollection(newName)](https://docs.mongodb.org/manual/reference/method/db.collection.renameCollection/)
-
 + [save(document)](https://docs.mongodb.org/manual/reference/method/db.collection.save/)
-
 + [stats()](https://docs.mongodb.org/manual/reference/method/db.collection.stats/)
-
-+ [update(query, update, options)](https://docs.mongodb.org/manual/reference/method/db.collection.update/)  
-  Same `query` type as `find()`. `upsert` and `multi` are supported in `options`.
++ [update(query, update, options)](https://docs.mongodb.org/manual/reference/method/db.collection.update/)
