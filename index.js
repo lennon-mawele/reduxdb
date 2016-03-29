@@ -164,11 +164,11 @@ var reduxdb;
             var _this = this;
             var index = this.__index__;
             var docs = [];
-            if (!doc_.length) {
-                docs = [doc_];
+            if (typeof doc_.length === "number") {
+                docs = doc_;
             }
             else {
-                docs = doc_;
+                docs = [doc_];
             }
             var keySet = {};
             var result = null;

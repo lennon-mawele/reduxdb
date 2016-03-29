@@ -124,3 +124,8 @@ db.user.update({name: "Dybala"}, {name: "Pirlo"}, {multi: true})
 deepStrictEqual(db.user.find({}).map(u => u.name).sort(), ["Barzagli", "Buffon", "Pirlo", "Pirlo", "Pirlo", "Pogba"])
 
 db.user.drop()
+setup(db)
+db.user.insert([])
+deepStrictEqual(db.user.count(), 3)
+
+db.user.drop()

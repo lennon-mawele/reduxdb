@@ -174,10 +174,10 @@ module reduxdb {
         __insert__(doc_: any): Object {
             let index = this.__index__
             let docs = []
-            if (!doc_.length) {
-                docs = [doc_]
-            } else {
+            if (typeof doc_.length === "number") {
                 docs = doc_
+            } else {
+                docs = [doc_]
             }
 
             let keySet = {}
