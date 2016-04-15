@@ -344,7 +344,7 @@ var reduxdb;
             };
         };
         DB.prototype.subscribe = function (func) {
-            this.__store__.subscribe(func);
+            return this.__store__.subscribe(func);
         };
         return DB;
     }());
