@@ -50,7 +50,7 @@ module reduxdb {
                     return this.__collections__
                 }
             })
-            this.__store__ = redux.createStore(reducer)
+            this.__store__ = redux.createStore(reducer, {}, window["devToolsExtension"] && window["devToolsExtension"]())
         }
 
         createCollection(name: string, options?: CollectionOption): Object {
