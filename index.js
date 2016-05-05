@@ -307,7 +307,7 @@ var reduxdb;
                     return _this.__collections__;
                 }
             });
-            this.__store__ = redux.createStore(reducer, {}, window["devToolsExtension"] && window["devToolsExtension"]());
+            this.__store__ = redux.createStore(reducer, {}, global["devToolsExtension"] && global["devToolsExtension"]());
         }
         DB.prototype.createCollection = function (name, options) {
             if (this[name]) {

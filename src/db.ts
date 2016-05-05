@@ -1,6 +1,7 @@
 /// <reference path="collection.ts" />
 
 declare var require
+declare var global
 const redux = require("redux")
 const Map = require("es6-map")
 
@@ -50,7 +51,7 @@ module reduxdb {
                     return this.__collections__
                 }
             })
-            this.__store__ = redux.createStore(reducer, {}, window["devToolsExtension"] && window["devToolsExtension"]())
+            this.__store__ = redux.createStore(reducer, {}, global["devToolsExtension"] && global["devToolsExtension"]())
         }
 
         createCollection(name: string, options?: CollectionOption): Object {
