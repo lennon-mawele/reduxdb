@@ -1,6 +1,4 @@
-declare namespace reduxdb {
-    let use: (name: string) => ReduxDB;
-
+declare module "reduxdb"{
     interface ReduxDB {
         createCollection(collectionName: string, indexConf: ReduxDBIndexConf): void;
         getCollection(name: string): ReduxDBCollection;
@@ -9,6 +7,24 @@ declare namespace reduxdb {
         stats(): {db: string, collections: number, objects: number, ok: number};
         subscribe(func: () => void): () => void;
         [propName: string]: any;
+    }
+
+    interface ReduxDBCollection {
+            find(query?: any): ReduxDBDocument[];
+            findOne(query?: any): ReduxDBDocument;
+            copyTo(newCollection: string): number;
+            count(): number;
+            drop(): boolean;
+            getDB(): ReduxDB;
+            getFullName(): string;
+            getIndexKeys(): IndexKeys[];
+            getName(): string;
+            insert(doc: ReduxDBDocument): void;
+            remove(query: any): void;
+            renameCollection(newName: string): { ok: number, errmsg?: string };
+            save(doc: ReduxDBDocument): void;
+            stats(): {ns: string, count: number, ok: number};
+            update(query:any, doc: ReduxDBDocument, option?: any): void;
     }
 
     interface ReduxDBDocument {
@@ -20,29 +36,14 @@ declare namespace reduxdb {
         index: string;
     }
 
-    interface indexKeys {
+    interface IndexKeys {
         [propName: string]: number;
     }
 
-    interface ReduxDBCollection {
-        find(query?: any): ReduxDBDocument[];
-        findOne(query?: any): ReduxDBDocument;
-        copyTo(newCollection: string): number;
-        count(): number;
-        drop(): boolean;
-        getDB(): ReduxDB;
-        getFullName(): string;
-        getIndexKeys(): indexKeys[];
-        getName(): string;
-        insert(doc: ReduxDBDocument): void;
-        remove(query: any): void;
-        renameCollection(newName: string): { ok: number, errmsg?: string };
-        save(doc: ReduxDBDocument): void;
-        stats(): {ns: string, count: number, ok: number};
-        update(query:any, doc: ReduxDBDocument, option?: any): void;
+    namespace reduxdb {
+        let use: (name: string) => ReduxDB;
+        let ReduxDBCollection: ReduxDBCollection;
     }
-}
 
-declare module "reduxdb"{
     export default reduxdb;
 }
