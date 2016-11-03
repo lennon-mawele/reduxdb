@@ -7,13 +7,11 @@ var reduxdb;
     }
     reduxdb.values = values;
     function newObjectId() {
-        var hex = "0123456789abcdef";
-        var id = [];
-        for (var i = 0; i < 24; i++) {
-            var k = Math.floor(Math.random() * 16);
-            id.push(hex.charAt(k));
-        }
-        return id.join("");
+        var prefix = (global.location ? global.location.href.length : global.process.pid).toString(16);
+        prefix = prefix.length < 2 ? ("0" + prefix) : prefix.substr(-2);
+        var tsPart = Date.now().toString(16);
+        tsPart = tsPart.length < 12 ? ("0" + tsPart) : tsPart.substr(-12);
+        return prefix + tsPart + Math.floor(Math.random() * Math.pow(16, 10)).toString(16);
     }
     reduxdb.newObjectId = newObjectId;
     var CollectionOption = (function () {

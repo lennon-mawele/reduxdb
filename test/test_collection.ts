@@ -5,6 +5,10 @@ const deepStrictEqual = assert.deepStrictEqual
 declare var require
 const reduxdb = require("../index.js")
 
+let objectId = reduxdb.newObjectId()
+console.log("newObjectId(): " + objectId)
+deepStrictEqual(objectId.length, 24)
+
 function setup(db) {
     db.createCollection("user", {index: "id"})
     db.user.insert({id: 1, name: "Buffon"})

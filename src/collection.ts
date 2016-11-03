@@ -10,13 +10,11 @@ module reduxdb {
     }
 
     export function newObjectId(): string {
-        let hex = "0123456789abcdef"
-        let id = []
-        for (let i = 0; i < 24; i++) {
-            let k = Math.floor(Math.random() * 16)
-            id.push(hex.charAt(k))
-        }
-        return id.join("")
+        let prefix: string = (global.location ? global.location.href.length : global.process.pid).toString(16)
+        prefix = prefix.length < 2 ? ("0" + prefix) : prefix.substr(-2)
+        let tsPart: string = Date.now().toString(16)
+        tsPart = tsPart.length < 12 ? ("0" + tsPart) : tsPart.substr(-12)
+        return prefix + tsPart + Math.floor(Math.random() * Math.pow(16, 10)).toString(16)
     }
 
     export class CollectionOption {
@@ -43,7 +41,7 @@ module reduxdb {
         }
 
         copyTo(newCollection: string): number {
-            this.__db__.createCollection(newCollection, {index: this.__index__})
+            this.__db__.createCollection(newCollection, { index: this.__index__ })
             let collection = this.__db__.getCollection(newCollection)
             assign(collection.__data__, this.__data__)
             return this.count()
@@ -131,14 +129,14 @@ module reduxdb {
         renameCollection(newName: string): Object {
             let db = this.__db__
             if (db[newName]) {
-                return {"ok": 0, "errmsg": "target namespace exists"}
+                return { "ok": 0, "errmsg": "target namespace exists" }
             } else {
                 db[newName] = this
                 db.__collections__.set(newName, this)
                 delete db[this.__name__]
                 db.__collections__.delete(this.__name__)
                 this.__name__ = newName
-                return {"ok": 1}
+                return { "ok": 1 }
             }
         }
 
@@ -153,9 +151,9 @@ module reduxdb {
 
         stats(): Object {
             return {
-                "ns" : this.getFullName(),
-                "count" : this.count(),
-                "ok" : 1
+                "ns": this.getFullName(),
+                "count": this.count(),
+                "ok": 1
             }
         }
 
@@ -185,7 +183,7 @@ module reduxdb {
             docs.forEach(doc => {
                 let key = doc[index] || newObjectId()
                 if (this.__data__[key] || keySet[key]) {
-                    result = {"nInserted": 0, "errmsg": "duplicate key"}
+                    result = { "nInserted": 0, "errmsg": "duplicate key" }
                 }
                 keySet[key] = true
             })
@@ -199,17 +197,17 @@ module reduxdb {
                 this.__data__[key] = newDoc
                 count += 1
             })
-            return {"nInserted": count}
+            return { "nInserted": count }
         }
 
         __remove__(query: Object): Object {
             let data = this.__data__
             if (query === undefined) {
-                let result = {"nRemoved": this.count()}
+                let result = { "nRemoved": this.count() }
                 this.__data__ = {}
                 return result
             } if (typeof query !== "object") {
-                return {"nRemoved": 0}
+                return { "nRemoved": 0 }
             } else {
                 let count = 0
                 values(data).forEach(v => {
@@ -222,7 +220,7 @@ module reduxdb {
                         delete data[v[this.__index__]]
                     }
                 })
-                return {"nRemoved": count}
+                return { "nRemoved": count }
             }
         }
 
