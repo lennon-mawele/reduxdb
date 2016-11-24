@@ -46,18 +46,8 @@ This [markdown](https://github.com/wizawu/reduxdb/blob/master/API.md) explains t
 + [copyTo(newCollection)](https://docs.mongodb.org/manual/reference/method/db.collection.copyTo/)
 + [count()](https://docs.mongodb.org/manual/reference/method/db.collection.count/)
 + [drop()](https://docs.mongodb.org/manual/reference/method/db.collection.drop/)
-
-+ [find(query)](https://docs.mongodb.org/manual/reference/method/db.collection.find/)  
-  See [Query for Equality](https://docs.mongodb.org/manual/reference/method/db.collection.find/#query-for-equality), for example
-  
-  ```
-  // Return all users matching {"age": 18, "name": {"first": "Andrew"}}
-  db.user.find({"age": 18, "name.first": "Andrew"})
-  ```
-
-+ [findOne(query)](https://docs.mongodb.org/manual/reference/method/db.collection.findOne/)  
-  Same `query` type as `find()`.
-
++ [find(query)](https://docs.mongodb.org/manual/reference/method/db.collection.find/)
++ [findOne(query)](https://docs.mongodb.org/manual/reference/method/db.collection.findOne/)
 + getDB()
 + getFullName()
 + getIndexKeys()
