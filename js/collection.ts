@@ -16,16 +16,18 @@ module reduxdb {
         prefix = prefix.length < 2 ? ("0" + prefix) : prefix.substr(-2)
         let tsPart: string = Date.now().toString(16)
         tsPart = tsPart.length < 12 ? ("0" + tsPart) : tsPart.substr(-12)
-        return prefix + tsPart + Math.floor(Math.random() * Math.pow(16, 10)).toString(16)
+        let suffix = Math.floor(Math.random() * Math.pow(16, 10)).toString(16)
+        while (suffix.length < 10) suffix = "0" + suffix
+        return prefix + tsPart + suffix
     }
 
-    export class CollectionOptions {
-        index: string
+    export interface CollectionOptions {
+        index?: string
     }
 
-    export class CollectionUpdateOptions {
-        upsert: boolean = false
-        multi: boolean = false
+    export interface CollectionUpdateOptions {
+        upsert?: boolean
+        multi?: boolean
     }
 
     export class Collection {

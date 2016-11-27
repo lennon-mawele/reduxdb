@@ -1,7 +1,8 @@
-var assign = require("object-assign");
-var get = require("object-path").get;
+/// <reference path="db.ts" />
 var reduxdb;
 (function (reduxdb) {
+    var assign = require("object-assign");
+    var get = require("object-path").get;
     function values(o) {
         return Object.keys(o).map(function (k) { return o[k]; });
     }
@@ -11,22 +12,12 @@ var reduxdb;
         prefix = prefix.length < 2 ? ("0" + prefix) : prefix.substr(-2);
         var tsPart = Date.now().toString(16);
         tsPart = tsPart.length < 12 ? ("0" + tsPart) : tsPart.substr(-12);
-        return prefix + tsPart + Math.floor(Math.random() * Math.pow(16, 10)).toString(16);
+        var suffix = Math.floor(Math.random() * Math.pow(16, 10)).toString(16);
+        while (suffix.length < 10)
+            suffix = "0" + suffix;
+        return prefix + tsPart + suffix;
     }
     reduxdb.newObjectId = newObjectId;
-    var CollectionOption = (function () {
-        function CollectionOption() {
-        }
-        return CollectionOption;
-    }());
-    reduxdb.CollectionOption = CollectionOption;
-    var CollectionUpdateOption = (function () {
-        function CollectionUpdateOption() {
-            this.upsert = false;
-            this.multi = false;
-        }
-        return CollectionUpdateOption;
-    }());
     var Collection = (function () {
         function Collection(db, name, options) {
             this.__index__ = "_id";
@@ -72,7 +63,7 @@ var reduxdb;
                 values(data).forEach(function (v) {
                     var ok = true;
                     Object.keys(query).forEach(function (k) {
-                        if (get(v, k, undefined) !== query[k])
+                        if (get(v, k) !== query[k])
                             ok = false;
                     });
                     if (ok)
@@ -270,10 +261,10 @@ var reduxdb;
     }());
     reduxdb.Collection = Collection;
 })(reduxdb || (reduxdb = {}));
-var redux = require("redux");
-var Map = require("es6-map");
+/// <reference path="collection.ts" />
 var reduxdb;
 (function (reduxdb) {
+    var redux = require("redux");
     var DB = (function () {
         function DB(name) {
             var _this = this;
@@ -308,7 +299,7 @@ var reduxdb;
             this.__store__ = redux.createStore(reducer, {}, global["devToolsExtension"] && global["devToolsExtension"]());
         }
         DB.prototype.createCollection = function (name, options) {
-            if (this[name]) {
+            if (this.hasOwnProperty(name)) {
                 return { "ok": 0, "errmsg": "collection already exists" };
             }
             else {
@@ -348,13 +339,14 @@ var reduxdb;
     }());
     reduxdb.DB = DB;
 })(reduxdb || (reduxdb = {}));
+/// <reference path="db.ts" />
 var reduxdb;
 (function (reduxdb) {
-    var dbs = {};
+    var dbs = new Map();
     function use(name) {
-        if (!dbs[name])
-            dbs[name] = new reduxdb.DB(name);
-        return dbs[name];
+        if (!dbs.has(name))
+            dbs.set(name, new reduxdb.DB(name));
+        return dbs.get(name);
     }
     reduxdb.use = use;
 })(reduxdb || (reduxdb = {}));
