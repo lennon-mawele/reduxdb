@@ -1,9 +1,5 @@
 language: node_js
 node_js:
   - stable
-before_script:
-  - npm install redux
-  - npm install
 script:
-  - npm run build
-  - npm run test
+  - npm install
