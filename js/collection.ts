@@ -1,12 +1,14 @@
 /// <reference path="db.ts" />
 
-declare var require
-const assign = require("object-assign")
-const { get } = require("object-path")
-
 module reduxdb {
-    export function values(o: Object): any[] {
-        return Object.keys(o).map(k => o[k])
+    declare var global: any
+    declare var require: any
+
+    const assign = require("object-assign")
+    const { get } = require("object-path")
+
+    export function values(o: any): any[] {
+        return Object.keys(o).map((k: string) => o[k])
     }
 
     export function newObjectId(): string {
@@ -17,11 +19,11 @@ module reduxdb {
         return prefix + tsPart + Math.floor(Math.random() * Math.pow(16, 10)).toString(16)
     }
 
-    export class CollectionOption {
+    export class CollectionOptions {
         index: string
     }
 
-    class CollectionUpdateOption {
+    export class CollectionUpdateOptions {
         upsert: boolean = false
         multi: boolean = false
     }
@@ -32,7 +34,7 @@ module reduxdb {
         private __index__: string = "_id"
         private __data__: Object = {}
 
-        constructor(db: DB, name: string, options?: CollectionOption) {
+        constructor(db: DB, name: string, options?: CollectionOptions) {
             this.__db__ = db
             this.__name__ = name
             if (options) {
@@ -50,8 +52,6 @@ module reduxdb {
         count(): number {
             return Object.keys(this.__data__).length
         }
-
-        // distinct(field: string) {}
 
         drop(): boolean {
             let db = this.__db__
@@ -72,11 +72,11 @@ module reduxdb {
             } if (typeof query !== "object") {
                 return []
             } else {
-                let result = []
+                let result: any[] = []
                 values(data).forEach(v => {
                     let ok = true
                     Object.keys(query).forEach(k => {
-                        if (get(v, k, undefined) !== query[k]) ok = false
+                        if (get(v, k) !== query[k]) ok = false
                     })
                     if (ok) result.push(v)
                 })
@@ -115,8 +115,6 @@ module reduxdb {
                 doc: doc
             })
         }
-
-        // mapReduce() {}
 
         remove(query?: Object): void {
             this.__db__.__store__.dispatch({
@@ -157,7 +155,7 @@ module reduxdb {
             }
         }
 
-        update(query: Object, doc: Object, options?: CollectionUpdateOption): void {
+        update(query: Object, doc: Object, options?: CollectionUpdateOptions): void {
             if (!query) throw "need a query"
             if (!doc) throw "need an object"
             this.__db__.__store__.dispatch({
@@ -171,7 +169,7 @@ module reduxdb {
 
         __insert__(doc_: any): Object {
             let index = this.__index__
-            let docs = []
+            let docs: any[] = []
             if (typeof doc_.length === "number") {
                 docs = doc_
             } else {
@@ -233,7 +231,7 @@ module reduxdb {
             return result
         }
 
-        __update__(query: Object, doc: Object, options?: CollectionUpdateOption): Object {
+        __update__(query: Object, doc: Object, options?: CollectionUpdateOptions): Object {
             let upsert = false
             let multi = false
             if (options) {

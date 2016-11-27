@@ -1,22 +1,14 @@
 /// <reference path="collection.ts" />
 
-declare var require
-declare var global
-const redux = require("redux")
-const Map = require("es6-map")
-
 module reduxdb {
-    interface ReduxStore {
-        dispatch(e)
-        subscribe(f)
-    }
+    declare var global: any
+    declare var require: any
 
-    interface Map<K, V> {
-        delete(k)
-        forEach(f)
-        get(k)
-        set(k, v)
-        size()
+    const redux = require("redux")
+
+    export interface ReduxStore {
+        dispatch(e: any): any
+        subscribe(f: any): any
     }
 
     export class DB {
@@ -54,8 +46,8 @@ module reduxdb {
             this.__store__ = redux.createStore(reducer, {}, global["devToolsExtension"] && global["devToolsExtension"]())
         }
 
-        createCollection(name: string, options?: CollectionOption): Object {
-            if (this[name]) {
+        createCollection(name: string, options?: CollectionOptions): Object {
+            if (this.hasOwnProperty(name)) {
                 return {"ok": 0, "errmsg": "collection already exists"}
             } else {
                 this[name] = new Collection(this, name, options)
@@ -71,7 +63,7 @@ module reduxdb {
         }
 
         getCollectionNames(): string[] {
-            let result = []
+            let result: string[] = []
             this.__collections__.forEach((_, k) => result.push(k))
             return result
         }

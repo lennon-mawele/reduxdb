@@ -1,13 +1,13 @@
 /// <reference path="db.ts" />
 
 module reduxdb {
-    let dbs = {}
+    const dbs: Map<string, DB> = new Map()
 
     export function use(name: string): DB {
-        if (!dbs[name]) dbs[name] = new DB(name)
-        return dbs[name]
+        if (!dbs.has(name)) dbs.set(name, new DB(name))
+        return dbs.get(name)
     }
 }
 
-declare var module
+declare var module: any
 module.exports = reduxdb
