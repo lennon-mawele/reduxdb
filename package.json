@@ -1,10 +1,10 @@
 {
   "name": "reduxdb",
-  "version": "1.0.0",
+  "version": "1.3.1",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
-    "build": "tsc -d --lib 'es6' --outFile index.js js/index.ts",
+    "build": "tsc -d --lib 'es6' --outFile index.js js/index.ts && echo 'export default reduxdb' >> index.d.ts",
     "watch": "tsc -d --lib 'es6' --outFile index.js -w js/index.ts",
     "test": "tsc test/test_*.ts && ls test/test_*.js |xargs -I {} node {}",
     "prepublish": "npm run build && npm run test"

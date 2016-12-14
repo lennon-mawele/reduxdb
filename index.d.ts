@@ -57,3 +57,4 @@ declare module reduxdb {
     function use(name: string): DB;
 }
 declare var module: any;
+export default reduxdb
