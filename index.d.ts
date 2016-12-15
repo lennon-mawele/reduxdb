@@ -1,4 +1,4 @@
-declare module reduxdb {
+declare namespace reduxdb {
     function values(o: any): any[];
     function newObjectId(): string;
     interface CollectionOptions {
@@ -35,7 +35,7 @@ declare module reduxdb {
         __update__(query: Object, doc: Object, options?: CollectionUpdateOptions): Object;
     }
 }
-declare module reduxdb {
+declare namespace reduxdb {
     interface ReduxStore {
         dispatch(e: any): any;
         subscribe(f: any): any;
@@ -53,8 +53,8 @@ declare module reduxdb {
         subscribe(func: any): any;
     }
 }
-declare module reduxdb {
+declare namespace reduxdb {
     function use(name: string): DB;
 }
-declare var module: any;
-export default reduxdb
+declare var namespace: any;
+export = reduxdb
