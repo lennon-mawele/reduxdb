@@ -1,5 +1,7 @@
 # reduxdb ![build status](https://travis-ci.org/wizawu/reduxdb.svg)
 
+Redux with MongoDB-like API.
+
 Notice that NOT all the features of MongoDB are implemented here, such as multi-index and query operators.
 
 The purpose of _reduxdb_ is to avoid writing almost the same actions and stores again and again in different projects.
@@ -30,7 +32,7 @@ This [markdown](https://github.com/wizawu/reduxdb/blob/master/API.md) explains t
 
 #### reduxdb
 
-+ use(name)  
++ use(name)
 
 #### reduxdb.DB
 
