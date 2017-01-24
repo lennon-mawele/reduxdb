@@ -1,6 +1,6 @@
 /// <reference path="db.ts" />
 
-module reduxdb {
+namespace reduxdb {
     const dbs: Map<string, DB> = new Map()
 
     export function use(name: string): DB {
@@ -9,5 +9,5 @@ module reduxdb {
     }
 }
 
-declare var module: any
+declare var module
 module.exports = reduxdb

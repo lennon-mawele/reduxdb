@@ -56,5 +56,4 @@ declare namespace reduxdb {
 declare namespace reduxdb {
     function use(name: string): DB;
 }
-declare var namespace: any;
-export = reduxdb
+declare var module: any;
