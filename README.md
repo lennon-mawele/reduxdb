@@ -15,15 +15,22 @@ npm install --save reduxdb
 ### Usage
 
 ```javascript
-import reduxdb = require("reduxdb")
+var reduxdb = require("reduxdb")
 
-let db = reduxdb.use("mysite")
-db.createCollection("user", {index: "id"})
-db.createCollection("team", {index: "id"})
-db.createCollection("book")     // using default index `_id`
+var db = reduxdb.use("test")
+db.createCollection("users", {index: "id"})
+db.createCollection("teams", {index: "id"})
+db.createCollection("books")    // using default index `_id`
 
-db.user.insert({id: "123", name: "wizawu"})
-db.user.findOne({name: "wizawu"}).id    // "123"
+db.subscribe(function() {
+    console.log(db.stats())
+    console.log(db.users.stats())
+    console.log(db.teams.stats())
+    console.log(db.books.stats())
+})
+
+db.users.insert({id: "1234", name: "wizawu"})
+db.users.findOne({name: "wizawu"}).id    // 1234
 ```
 
 ### API
