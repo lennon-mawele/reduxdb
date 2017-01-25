@@ -9,7 +9,7 @@ The purpose of _reduxdb_ is to avoid writing almost the same actions and stores 
 ### Installation
 
 ```shell
-npm install --save redux reduxdb
+npm install --save reduxdb
 ```
 
 ### Usage
