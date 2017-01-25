@@ -1,6 +1,6 @@
 /// <reference path="db.ts" />
 
-namespace reduxdb {
+module reduxdb {
     declare var global: any
     declare var require: any
 

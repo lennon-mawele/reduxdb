@@ -1,6 +1,6 @@
 /// <reference path="collection.ts" />
 
-namespace reduxdb {
+module reduxdb {
     declare var global: any
     declare var require: any
 
@@ -10,7 +10,7 @@ namespace reduxdb {
         private __map__: any = {}
         public size: number = 0
 
-        forEach(callback: (T, string) => void) {
+        forEach(callback: (value: T, key: string) => void) {
             Object.keys(this.__map__).forEach((key: string) => {
                 let value: T = this.__map__[key]
                 callback(value, key)

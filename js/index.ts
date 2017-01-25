@@ -1,6 +1,6 @@
 /// <reference path="db.ts" />
 
-namespace reduxdb {
+module reduxdb {
     const dbs: Map<DB> = new Map<DB>()
 
     export function use(name: string): DB {

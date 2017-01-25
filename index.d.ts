@@ -1,4 +1,4 @@
-declare namespace reduxdb {
+declare module reduxdb {
     function values(o: any): any[];
     function newObjectId(): string;
     interface CollectionOptions {
@@ -35,11 +35,11 @@ declare namespace reduxdb {
         __update__(query: Object, doc: Object, options?: CollectionUpdateOptions): Object;
     }
 }
-declare namespace reduxdb {
+declare module reduxdb {
     class Map<T> {
         private __map__;
         size: number;
-        forEach(callback: (T, string) => void): void;
+        forEach(callback: (value: T, key: string) => void): void;
         has(key: string): boolean;
         get(key: string): T;
         set(key: string, value: T): void;
@@ -62,7 +62,7 @@ declare namespace reduxdb {
         subscribe(func: any): any;
     }
 }
-declare namespace reduxdb {
+declare module reduxdb {
     function use(name: string): DB;
 }
 declare var module: any;
