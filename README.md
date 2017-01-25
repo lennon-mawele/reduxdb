@@ -1,4 +1,4 @@
-# reduxdb ![build status](https://travis-ci.org/wizawu/reduxdb.svg)
+# reduxdb [![build status](https://travis-ci.org/wizawu/reduxdb.svg)](https://travis-ci.org/wizawu/reduxdb)
 
 Redux with MongoDB-like API.
 
