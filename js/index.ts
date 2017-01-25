@@ -1,7 +1,7 @@
 /// <reference path="db.ts" />
 
 namespace reduxdb {
-    const dbs: Map<string, DB> = new Map()
+    const dbs: Map<DB> = new Map<DB>()
 
     export function use(name: string): DB {
         if (!dbs.has(name)) dbs.set(name, new DB(name))

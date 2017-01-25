@@ -36,13 +36,22 @@ declare namespace reduxdb {
     }
 }
 declare namespace reduxdb {
+    class Map<T> {
+        private __map__;
+        size: number;
+        forEach(callback: (T, string) => void): void;
+        has(key: string): boolean;
+        get(key: string): T;
+        set(key: string, value: T): void;
+        delete(key: string): void;
+    }
     interface ReduxStore {
         dispatch(e: any): any;
         subscribe(f: any): any;
     }
     class DB {
         private __name__;
-        __collections__: Map<string, Collection>;
+        __collections__: Map<Collection>;
         __store__: ReduxStore;
         constructor(name: string);
         createCollection(name: string, options?: CollectionOptions): Object;

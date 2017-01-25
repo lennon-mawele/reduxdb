@@ -265,6 +265,35 @@ var reduxdb;
 var reduxdb;
 (function (reduxdb) {
     var redux = require("redux");
+    var Map = (function () {
+        function Map() {
+            this.__map__ = {};
+            this.size = 0;
+        }
+        Map.prototype.forEach = function (callback) {
+            var _this = this;
+            Object.keys(this.__map__).forEach(function (key) {
+                var value = _this.__map__[key];
+                callback(value, key);
+            });
+        };
+        Map.prototype.has = function (key) {
+            return this.__map__[key] !== undefined;
+        };
+        Map.prototype.get = function (key) {
+            return this.__map__[key];
+        };
+        Map.prototype.set = function (key, value) {
+            this.__map__[key] = value;
+            this.size = Object.keys(this.__map__).length;
+        };
+        Map.prototype.delete = function (key) {
+            delete this.__map__[key];
+            this.size = Object.keys(this.__map__).length;
+        };
+        return Map;
+    }());
+    reduxdb.Map = Map;
     var DB = (function () {
         function DB(name) {
             var _this = this;
@@ -342,7 +371,7 @@ var reduxdb;
 /// <reference path="db.ts" />
 var reduxdb;
 (function (reduxdb) {
-    var dbs = new Map();
+    var dbs = new reduxdb.Map();
     function use(name) {
         if (!dbs.has(name))
             dbs.set(name, new reduxdb.DB(name));

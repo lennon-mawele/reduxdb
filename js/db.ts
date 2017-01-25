@@ -6,6 +6,36 @@ namespace reduxdb {
 
     const redux = require("redux")
 
+    export class Map<T> {
+        private __map__: any = {}
+        public size: number = 0
+
+        forEach(callback: (T, string) => void) {
+            Object.keys(this.__map__).forEach((key: string) => {
+                let value: T = this.__map__[key]
+                callback(value, key)
+            })
+        }
+
+        has(key: string): boolean {
+            return this.__map__[key] !== undefined
+        }
+
+        get(key: string): T {
+            return this.__map__[key]
+        }
+
+        set(key: string, value: T) {
+            this.__map__[key] = value
+            this.size = Object.keys(this.__map__).length
+        }
+
+        delete(key: string) {
+            delete this.__map__[key]
+            this.size = Object.keys(this.__map__).length
+        }
+    }
+
     export interface ReduxStore {
         dispatch(e: any): any
         subscribe(f: any): any
@@ -13,7 +43,7 @@ namespace reduxdb {
 
     export class DB {
         private __name__: string
-        __collections__: Map<string, Collection> = new Map()
+        __collections__: Map<Collection> = new Map<Collection>()
         __store__: ReduxStore
 
         constructor(name: string) {
