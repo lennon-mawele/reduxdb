@@ -1,4 +1,6 @@
 *.log
 *.swp
+.gradle
+build.gradle
 node_modules
 yarn.lock
