@@ -80,7 +80,7 @@ module reduxdb {
             this.__store__ = redux.createStore(reducer, {}, global["devToolsExtension"] && global["devToolsExtension"]())
         }
 
-        createCollection(name: string, options?: CollectionOptions): Object {
+        createCollection(name: string, options?: CollectionOptions): any {
             if (this.hasOwnProperty(name)) {
                 return {"ok": 0, "errmsg": "collection already exists"}
             } else {
@@ -106,7 +106,7 @@ module reduxdb {
             return this.__name__
         }
 
-        stats(): Object {
+        stats(): any {
             let objects = 0
             this.__collections__.forEach(c => objects += c.count())
             return {

@@ -34,7 +34,7 @@ module reduxdb {
         private __db__: DB
         private __name__: string
         private __index__: string = "_id"
-        private __data__: Object = {}
+        private __data__: any = {}
 
         constructor(db: DB, name: string, options?: CollectionOptions) {
             this.__db__ = db
@@ -67,7 +67,7 @@ module reduxdb {
             }
         }
 
-        find(query?: Object): Object[] {
+        find(query?: any): any[] {
             let data = this.__data__
             if (query === undefined) {
                 return values(data)
@@ -86,7 +86,7 @@ module reduxdb {
             }
         }
 
-        findOne(query?: Object): Object {
+        findOne(query?: any): any {
             let result = this.find(query)
             return result.length === 0 ? null : result[0]
         }
@@ -99,7 +99,7 @@ module reduxdb {
             return this.__db__.getName() + "." + this.__name__
         }
 
-        getIndexKeys(): Object[] {
+        getIndexKeys(): any[] {
             let result = [{}]
             result[0][this.__index__] = 1
             return result
@@ -118,7 +118,7 @@ module reduxdb {
             })
         }
 
-        remove(query?: Object): void {
+        remove(query?: any): void {
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
                 type: "remove",
@@ -126,7 +126,7 @@ module reduxdb {
             })
         }
 
-        renameCollection(newName: string): Object {
+        renameCollection(newName: string): any {
             let db = this.__db__
             if (db[newName]) {
                 return { "ok": 0, "errmsg": "target namespace exists" }
@@ -140,7 +140,7 @@ module reduxdb {
             }
         }
 
-        save(doc: Object): void {
+        save(doc: any): void {
             if (!doc) throw "can't save a null"
             this.__db__.__store__.dispatch({
                 ns: this.getFullName(),
@@ -149,7 +149,7 @@ module reduxdb {
             })
         }
 
-        stats(): Object {
+        stats(): any {
             return {
                 "ns": this.getFullName(),
                 "count": this.count(),
@@ -157,7 +157,7 @@ module reduxdb {
             }
         }
 
-        update(query: Object, doc: Object, options?: CollectionUpdateOptions): void {
+        update(query: any, doc: any, options?: CollectionUpdateOptions): void {
             if (!query) throw "need a query"
             if (!doc) throw "need an object"
             this.__db__.__store__.dispatch({
@@ -169,7 +169,7 @@ module reduxdb {
             })
         }
 
-        __insert__(doc_: any): Object {
+        __insert__(doc_: any): any {
             let index = this.__index__
             let docs: any[] = []
             if (typeof doc_.length === "number") {
@@ -200,7 +200,7 @@ module reduxdb {
             return { "nInserted": count }
         }
 
-        __remove__(query: Object): Object {
+        __remove__(query: any): any {
             let data = this.__data__
             if (query === undefined) {
                 let result = { "nRemoved": this.count() }
@@ -224,7 +224,7 @@ module reduxdb {
             }
         }
 
-        __save__(doc: Object): Object {
+        __save__(doc: any): any {
             let index = this.__index__
             let result = assign({}, doc)
             if (!result[index]) result[index] = newObjectId()
@@ -233,7 +233,7 @@ module reduxdb {
             return result
         }
 
-        __update__(query: Object, doc: Object, options?: CollectionUpdateOptions): Object {
+        __update__(query: any, doc: any, options?: CollectionUpdateOptions): any {
             let upsert = false
             let multi = false
             if (options) {

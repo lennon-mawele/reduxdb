@@ -17,22 +17,22 @@ declare module reduxdb {
         copyTo(newCollection: string): number;
         count(): number;
         drop(): boolean;
-        find(query?: Object): Object[];
-        findOne(query?: Object): Object;
+        find(query?: any): any[];
+        findOne(query?: any): any;
         getDB(): DB;
         getFullName(): string;
-        getIndexKeys(): Object[];
+        getIndexKeys(): any[];
         getName(): string;
         insert(doc: any): void;
-        remove(query?: Object): void;
-        renameCollection(newName: string): Object;
-        save(doc: Object): void;
-        stats(): Object;
-        update(query: Object, doc: Object, options?: CollectionUpdateOptions): void;
-        __insert__(doc_: any): Object;
-        __remove__(query: Object): Object;
-        __save__(doc: Object): Object;
-        __update__(query: Object, doc: Object, options?: CollectionUpdateOptions): Object;
+        remove(query?: any): void;
+        renameCollection(newName: string): any;
+        save(doc: any): void;
+        stats(): any;
+        update(query: any, doc: any, options?: CollectionUpdateOptions): void;
+        __insert__(doc_: any): any;
+        __remove__(query: any): any;
+        __save__(doc: any): any;
+        __update__(query: any, doc: any, options?: CollectionUpdateOptions): any;
     }
 }
 declare module reduxdb {
@@ -57,11 +57,11 @@ declare module reduxdb {
         __collections__: Map<Collection>;
         __store__: ReduxStore;
         constructor(name: string);
-        createCollection(name: string, options?: CollectionOptions): Object;
+        createCollection(name: string, options?: CollectionOptions): any;
         getCollection(name: string): Collection;
         getCollectionNames(): string[];
         getName(): string;
-        stats(): Object;
+        stats(): any;
         subscribe(func: any): any;
     }
 }
