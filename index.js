@@ -42,7 +42,7 @@ var reduxdb;
             var db = this.__db__;
             var name = this.__name__;
             if (db.__collections__.get(name)) {
-                db.__collections__.delete(name);
+                db.__collections__["delete"](name);
                 delete db[name];
                 return true;
             }
@@ -115,7 +115,7 @@ var reduxdb;
                 db[newName] = this;
                 db.__collections__.set(newName, this);
                 delete db[this.__name__];
-                db.__collections__.delete(this.__name__);
+                db.__collections__["delete"](this.__name__);
                 this.__name__ = newName;
                 return { "ok": 1 };
             }
@@ -287,7 +287,7 @@ var reduxdb;
             this.__map__[key] = value;
             this.size = Object.keys(this.__map__).length;
         };
-        Map.prototype.delete = function (key) {
+        Map.prototype["delete"] = function (key) {
             delete this.__map__[key];
             this.size = Object.keys(this.__map__).length;
         };

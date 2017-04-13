@@ -41,6 +41,10 @@ module reduxdb {
         subscribe(f: any): any
     }
 
+    export interface DB$ {
+        [name: string]: Collection
+    }
+
     export class DB {
         private __name__: string
         __collections__: Map<Collection> = new Map<Collection>()

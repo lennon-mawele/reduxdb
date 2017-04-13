@@ -49,6 +49,9 @@ declare module reduxdb {
         dispatch(e: any): any;
         subscribe(f: any): any;
     }
+    interface DB$ {
+        [name: string]: Collection;
+    }
     class DB {
         private __name__;
         __collections__: Map<Collection>;
