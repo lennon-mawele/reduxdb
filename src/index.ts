@@ -321,10 +321,10 @@ export class DB {
         }
     }
 
-    getCollection(name: string): Collection | undefined {
+    getCollection(name: string): Collection {
         if (!name) throw "Collection constructor called with undefined argument"
         this.createCollection(name)
-        return this.__collections__.get(name)
+        return this.__collections__.get(name) as Collection
     }
 
     getCollectionNames(): string[] {
@@ -355,7 +355,7 @@ export class DB {
 
 const dbs: Map<string, DB> = new Map<string, DB>()
 
-export function use(name: string): DB | undefined {
+export function use(name: string): DB {
     if (!dbs.has(name)) dbs.set(name, new DB(name))
-    return dbs.get(name)
+    return dbs.get(name) as DB
 }
