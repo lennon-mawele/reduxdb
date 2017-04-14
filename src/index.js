@@ -7,7 +7,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var redux = require("redux");
 var object_path_1 = require("object-path");
 var Map = (function () {
@@ -32,7 +32,7 @@ var Map = (function () {
         this.__map__[key] = value;
         this.size = Object.keys(this.__map__).length;
     };
-    Map.prototype["delete"] = function (key) {
+    Map.prototype.delete = function (key) {
         delete this.__map__[key];
         this.size = Object.keys(this.__map__).length;
     };
@@ -77,7 +77,7 @@ var Collection = (function () {
         var db = this.__db__;
         var name = this.__name__;
         if (db.__collections__.get(name)) {
-            db.__collections__["delete"](name);
+            db.__collections__.delete(name);
             delete db[name];
             return true;
         }
@@ -150,7 +150,7 @@ var Collection = (function () {
             db[newName] = this;
             db.__collections__.set(newName, this);
             delete db[this.__name__];
-            db.__collections__["delete"](this.__name__);
+            db.__collections__.delete(this.__name__);
             this.__name__ = newName;
             return { "ok": 1 };
         }

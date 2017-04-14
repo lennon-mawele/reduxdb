@@ -6,6 +6,6 @@ build:
 watch:
 	tsc -d -p . -w
 
-test: build
-	tsc test/js/*.ts
-	node test/js/*.js
+test:
+	tsc test/*.ts
+	node test/*.js

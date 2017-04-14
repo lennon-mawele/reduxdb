@@ -1,5 +1,5 @@
 import * as chai from "chai"
-import * as reduxdb from "../../src/index"
+import * as reduxdb from "../src/index"
 
 const { deepEqual } = chai.assert
 

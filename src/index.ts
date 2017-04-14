@@ -47,13 +47,15 @@ export function newObjectId(): string {
     return prefix + tsPart + suffix
 }
 
-export interface CollectionOptions {
-    index?: string
-}
+export declare namespace Collection {
+    interface Options {
+        index?: string
+    }
 
-export interface CollectionUpdateOptions {
-    upsert?: boolean
-    multi?: boolean
+    interface UpdateOptions {
+        upsert?: boolean
+        multi?: boolean
+    }
 }
 
 export class Collection {
@@ -62,7 +64,7 @@ export class Collection {
     private __index__: string = "_id"
     private __data__: any = {}
 
-    constructor(db: DB, name: string, options?: CollectionOptions) {
+    constructor(db: DB, name: string, options?: Collection.Options) {
         this.__db__ = db
         this.__name__ = name
         if (options) {
@@ -185,7 +187,7 @@ export class Collection {
         }
     }
 
-    update(query: any, doc: any, options?: CollectionUpdateOptions): void {
+    update(query: any, doc: any, options?: Collection.UpdateOptions): void {
         if (!query) throw "need a query"
         if (!doc) throw "need an object"
         this.__db__.__store__.dispatch({
@@ -261,7 +263,7 @@ export class Collection {
         return result
     }
 
-    __update__(query: any, doc: any, options?: CollectionUpdateOptions): any {
+    __update__(query: any, doc: any, options?: Collection.UpdateOptions): any {
         let upsert = false
         let multi = false
         if (options) {
@@ -341,7 +343,7 @@ export class DB {
         this.__store__ = redux.createStore(reducer, {})
     }
 
-    createCollection(name: string, options?: CollectionOptions): any {
+    createCollection(name: string, options?: Collection.Options): any {
         if (this.hasOwnProperty(name)) {
             return { "ok": 0, "errmsg": "collection already exists" }
         } else {

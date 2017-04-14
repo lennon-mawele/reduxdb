@@ -9,19 +9,21 @@ export declare class Map<T> {
     delete(key: string): void;
 }
 export declare function newObjectId(): string;
-export interface CollectionOptions {
-    index?: string;
-}
-export interface CollectionUpdateOptions {
-    upsert?: boolean;
-    multi?: boolean;
+export declare namespace Collection {
+    interface Options {
+        index?: string;
+    }
+    interface UpdateOptions {
+        upsert?: boolean;
+        multi?: boolean;
+    }
 }
 export declare class Collection {
     private __db__;
     private __name__;
     private __index__;
     private __data__;
-    constructor(db: DB, name: string, options?: CollectionOptions);
+    constructor(db: DB, name: string, options?: Collection.Options);
     copyTo(newCollection: string): number;
     count(): number;
     drop(): boolean;
@@ -36,11 +38,11 @@ export declare class Collection {
     renameCollection(newName: string): any;
     save(doc: any): void;
     stats(): any;
-    update(query: any, doc: any, options?: CollectionUpdateOptions): void;
+    update(query: any, doc: any, options?: Collection.UpdateOptions): void;
     __insert__(doc_: any): any;
     __remove__(query: any): any;
     __save__(doc: any): any;
-    __update__(query: any, doc: any, options?: CollectionUpdateOptions): any;
+    __update__(query: any, doc: any, options?: Collection.UpdateOptions): any;
 }
 export interface DB$ {
     [name: string]: Collection;
@@ -50,7 +52,7 @@ export declare class DB {
     __collections__: Map<Collection>;
     __store__: redux.Store<any>;
     constructor(name: string);
-    createCollection(name: string, options?: CollectionOptions): any;
+    createCollection(name: string, options?: Collection.Options): any;
     getCollection(name: string): Collection;
     getCollectionNames(): string[];
     getName(): string;
