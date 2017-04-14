@@ -1,4 +1,13 @@
 import * as redux from "redux";
+export declare class Map<T> {
+    private __map__;
+    size: number;
+    forEach(callback: (value: T, key: string) => void): void;
+    has(key: string): boolean;
+    get(key: string): T;
+    set(key: string, value: T): void;
+    delete(key: string): void;
+}
 export declare function newObjectId(): string;
 export interface CollectionOptions {
     index?: string;
@@ -38,7 +47,7 @@ export interface DB$ {
 }
 export declare class DB {
     private __name__;
-    __collections__: Map<string, Collection>;
+    __collections__: Map<Collection>;
     __store__: redux.Store<any>;
     constructor(name: string);
     createCollection(name: string, options?: CollectionOptions): any;

@@ -1,14 +1,12 @@
-/// <reference path="assert.d.ts" />
-import assert = require("assert")
+import * as chai from "chai"
+import * as reduxdb from "../../src/index"
 
-declare var require
-const reduxdb = require("../index.js")
+const { deepEqual, notEqual } = chai.assert
+const db = reduxdb.use("test")
 
-let db = reduxdb.use("test")
-assert.deepStrictEqual(reduxdb.use("test"), db)
-assert.notEqual(reduxdb.use("test"), undefined)
-assert.notEqual(reduxdb.use("test"), null)
-assert.notEqual(reduxdb.use("test"), reduxdb.use("other"))
+deepEqual(reduxdb.use("test"), db)
+notEqual(reduxdb.use("test"), undefined)
+notEqual(reduxdb.use("test"), null)
+notEqual(reduxdb.use("test"), reduxdb.use("other"))
 
-assert.deepStrictEqual(reduxdb.values({a: 1, b: 2}).sort(), [1, 2])
-assert.deepStrictEqual(reduxdb.newObjectId().length, 24)
+deepEqual(reduxdb.newObjectId().length, 24)

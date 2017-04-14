@@ -7,9 +7,38 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     }
     return t;
 };
-Object.defineProperty(exports, "__esModule", { value: true });
+exports.__esModule = true;
 var redux = require("redux");
 var object_path_1 = require("object-path");
+var Map = (function () {
+    function Map() {
+        this.__map__ = {};
+        this.size = 0;
+    }
+    Map.prototype.forEach = function (callback) {
+        var _this = this;
+        Object.keys(this.__map__).forEach(function (key) {
+            var value = _this.__map__[key];
+            callback(value, key);
+        });
+    };
+    Map.prototype.has = function (key) {
+        return this.__map__[key] !== undefined;
+    };
+    Map.prototype.get = function (key) {
+        return this.__map__[key];
+    };
+    Map.prototype.set = function (key, value) {
+        this.__map__[key] = value;
+        this.size = Object.keys(this.__map__).length;
+    };
+    Map.prototype["delete"] = function (key) {
+        delete this.__map__[key];
+        this.size = Object.keys(this.__map__).length;
+    };
+    return Map;
+}());
+exports.Map = Map;
 function values(obj) {
     return Object.keys(obj).map(function (k) { return obj[k]; });
 }
@@ -48,7 +77,7 @@ var Collection = (function () {
         var db = this.__db__;
         var name = this.__name__;
         if (db.__collections__.get(name)) {
-            db.__collections__.delete(name);
+            db.__collections__["delete"](name);
             delete db[name];
             return true;
         }
@@ -121,7 +150,7 @@ var Collection = (function () {
             db[newName] = this;
             db.__collections__.set(newName, this);
             delete db[this.__name__];
-            db.__collections__.delete(this.__name__);
+            db.__collections__["delete"](this.__name__);
             this.__name__ = newName;
             return { "ok": 1 };
         }
