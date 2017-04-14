@@ -5,11 +5,13 @@
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "dependencies": {
-    "@types/object-path": "^0.9.28",
     "object-path": "^0.11.4",
     "redux": "^3.6.0"
   },
   "devDependencies": {
-    "@types/redux": "^3.6.0"
+    "@types/chai": "^3.5.0",
+    "@types/object-path": "^0.9.28",
+    "@types/redux": "^3.6.0",
+    "chai": "^3.5.0"
   }
 }
