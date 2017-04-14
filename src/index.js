@@ -9,39 +9,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var redux = require("redux");
-var object_path_1 = require("object-path");
-var Map = (function () {
-    function Map() {
-        this.__map__ = {};
-        this.size = 0;
-    }
-    Map.prototype.forEach = function (callback) {
-        var _this = this;
-        Object.keys(this.__map__).forEach(function (key) {
-            var value = _this.__map__[key];
-            callback(value, key);
-        });
-    };
-    Map.prototype.has = function (key) {
-        return this.__map__[key] !== undefined;
-    };
-    Map.prototype.get = function (key) {
-        return this.__map__[key];
-    };
-    Map.prototype.set = function (key, value) {
-        this.__map__[key] = value;
-        this.size = Object.keys(this.__map__).length;
-    };
-    Map.prototype.delete = function (key) {
-        delete this.__map__[key];
-        this.size = Object.keys(this.__map__).length;
-    };
-    return Map;
-}());
-exports.Map = Map;
-function values(obj) {
-    return Object.keys(obj).map(function (k) { return obj[k]; });
-}
+var util_1 = require("./util");
 function newObjectId() {
     var prefix = (global.location ? global.location.href.length : global.process.pid).toString(16);
     prefix = prefix.length < 2 ? ("0" + prefix) : prefix.substr(-2);
@@ -59,10 +27,8 @@ var Collection = (function () {
         this.__data__ = {};
         this.__db__ = db;
         this.__name__ = name;
-        if (options) {
-            if (options.index)
-                this.__index__ = options.index;
-        }
+        if (options && options.index)
+            this.__index__ = options.index;
     }
     Collection.prototype.copyTo = function (newCollection) {
         this.__db__.createCollection(newCollection, { index: this.__index__ });
@@ -88,17 +54,17 @@ var Collection = (function () {
     Collection.prototype.find = function (query) {
         var data = this.__data__;
         if (query === undefined) {
-            return values(data);
+            return util_1.values(data);
         }
         if (typeof query !== "object") {
             return [];
         }
         else {
             var result_1 = [];
-            values(data).forEach(function (v) {
+            util_1.values(data).forEach(function (v) {
                 var ok = true;
                 Object.keys(query).forEach(function (k) {
-                    if (object_path_1.get(v, k) !== query[k])
+                    if (util_1.deepGet(v, k) !== query[k])
                         ok = false;
                 });
                 if (ok)
@@ -228,10 +194,10 @@ var Collection = (function () {
         }
         else {
             var count_1 = 0;
-            values(data).forEach(function (v) {
+            util_1.values(data).forEach(function (v) {
                 var ok = true;
                 Object.keys(query).forEach(function (k) {
-                    if (object_path_1.get(v, k, undefined) !== query[k])
+                    if (util_1.deepGet(v, k, undefined) !== query[k])
                         ok = false;
                 });
                 if (ok) {
@@ -263,10 +229,10 @@ var Collection = (function () {
         var nUpserted = 0;
         var nModified = 0;
         var index = this.__index__;
-        values(this.__data__).forEach(function (v) {
+        util_1.values(this.__data__).forEach(function (v) {
             var ok = true;
             Object.keys(query).forEach(function (k) {
-                if (object_path_1.get(v, k, undefined) !== query[k])
+                if (util_1.deepGet(v, k, undefined) !== query[k])
                     ok = false;
             });
             if (ok) {
@@ -298,7 +264,7 @@ exports.Collection = Collection;
 var DB = (function () {
     function DB(name) {
         var _this = this;
-        this.__collections__ = new Map();
+        this.__collections__ = new util_1.Map();
         this.__name__ = name;
         var reducer = redux.combineReducers({
             all: function (_, _a) {
@@ -368,7 +334,7 @@ var DB = (function () {
     return DB;
 }());
 exports.DB = DB;
-var dbs = new Map();
+var dbs = new util_1.Map();
 function use(name) {
     if (!dbs.has(name))
         dbs.set(name, new DB(name));

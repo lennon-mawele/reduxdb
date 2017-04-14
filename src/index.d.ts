@@ -1,13 +1,5 @@
 import * as redux from "redux";
-export declare class Map<T> {
-    private __map__;
-    size: number;
-    forEach(callback: (value: T, key: string) => void): void;
-    has(key: string): boolean;
-    get(key: string): T;
-    set(key: string, value: T): void;
-    delete(key: string): void;
-}
+import { Map } from "./util";
 export declare function newObjectId(): string;
 export declare namespace Collection {
     interface Options {

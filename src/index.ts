@@ -1,49 +1,20 @@
 import * as redux from "redux"
-import { get } from "object-path"
+import { Map, values, deepGet } from "./util"
 
 declare const global: any
 
-export class Map<T> {
-    private __map__: any = {}
-    public size: number = 0
-
-    forEach(callback: (value: T, key: string) => void) {
-        Object.keys(this.__map__).forEach((key: string) => {
-            let value: T = this.__map__[key]
-            callback(value, key)
-        })
-    }
-
-    has(key: string): boolean {
-        return this.__map__[key] !== undefined
-    }
-
-    get(key: string): T {
-        return this.__map__[key]
-    }
-
-    set(key: string, value: T) {
-        this.__map__[key] = value
-        this.size = Object.keys(this.__map__).length
-    }
-
-    delete(key: string) {
-        delete this.__map__[key]
-        this.size = Object.keys(this.__map__).length
-    }
-}
-
-function values(obj: any): any[] {
-    return Object.keys(obj).map(k => obj[k])
-}
-
 export function newObjectId(): string {
-    let prefix: string = (global.location ? global.location.href.length : global.process.pid).toString(16)
+    let prefix: string = (
+        global.location ? global.location.href.length : global.process.pid
+    ).toString(16)
     prefix = prefix.length < 2 ? ("0" + prefix) : prefix.substr(-2)
+
     let tsPart: string = Date.now().toString(16)
     tsPart = tsPart.length < 12 ? ("0" + tsPart) : tsPart.substr(-12)
+
     let suffix = Math.floor(Math.random() * Math.pow(16, 10)).toString(16)
     while (suffix.length < 10) suffix = "0" + suffix
+
     return prefix + tsPart + suffix
 }
 
@@ -67,17 +38,13 @@ export class Collection {
     constructor(db: DB, name: string, options?: Collection.Options) {
         this.__db__ = db
         this.__name__ = name
-        if (options) {
-            if (options.index) this.__index__ = options.index
-        }
+        if (options && options.index) this.__index__ = options.index
     }
 
     copyTo(newCollection: string): number {
         this.__db__.createCollection(newCollection, { index: this.__index__ })
         let collection: any = this.__db__.getCollection(newCollection)
-        collection.__data__ = {
-            ...collection.__data__, ...this.__data__
-        }
+        collection.__data__ = { ...collection.__data__, ...this.__data__ }
         return this.count()
     }
 
@@ -108,7 +75,7 @@ export class Collection {
             values(data).forEach(v => {
                 let ok = true
                 Object.keys(query).forEach(k => {
-                    if (get(v, k) !== query[k]) ok = false
+                    if (deepGet(v, k) !== query[k]) ok = false
                 })
                 if (ok) result.push(v)
             })
@@ -243,7 +210,7 @@ export class Collection {
             values(data).forEach(v => {
                 let ok = true
                 Object.keys(query).forEach(k => {
-                    if (get(v, k, undefined) !== query[k]) ok = false
+                    if (deepGet(v, k, undefined) !== query[k]) ok = false
                 })
                 if (ok) {
                     count += 1
@@ -277,7 +244,7 @@ export class Collection {
         values(this.__data__).forEach(v => {
             let ok = true
             Object.keys(query).forEach(k => {
-                if (get(v, k, undefined) !== query[k]) ok = false
+                if (deepGet(v, k, undefined) !== query[k]) ok = false
             })
             if (ok) {
                 if (multi || nModified < 1) {

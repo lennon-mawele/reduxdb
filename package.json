@@ -1,6 +1,6 @@
 {
   "name": "reduxdb",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "repository": "github:wizawu/reduxdb",
   "main": "src/index.js",
   "types": "src/index.d.ts",
