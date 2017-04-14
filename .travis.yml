@@ -4,4 +4,4 @@ node_js:
 script:
   - npm install
   - npm install typescript
-  - npm run test
+  - make test
