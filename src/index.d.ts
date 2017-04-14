@@ -52,3 +52,4 @@ export declare class DB {
     subscribe(func: any): any;
 }
 export declare function use(name: string): DB;
+export declare function drop(name: string): void;

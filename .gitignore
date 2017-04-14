@@ -4,5 +4,4 @@
 build
 build.gradle
 node_modules
-test/**/*.js
 yarn.lock

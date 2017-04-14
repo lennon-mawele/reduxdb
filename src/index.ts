@@ -358,3 +358,7 @@ export function use(name: string): DB {
     if (!dbs.has(name)) dbs.set(name, new DB(name))
     return dbs.get(name) as DB
 }
+
+export function drop(name: string) {
+    return dbs.delete(name)
+}

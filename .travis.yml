@@ -3,5 +3,5 @@ node_js:
   - stable
 script:
   - npm install
-  - npm install typescript
+  - npm install typescript mocha
   - make test

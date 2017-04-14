@@ -341,3 +341,7 @@ function use(name) {
     return dbs.get(name);
 }
 exports.use = use;
+function drop(name) {
+    return dbs.delete(name);
+}
+exports.drop = drop;

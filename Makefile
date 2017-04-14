@@ -6,11 +6,8 @@ build:
 watch:
 	tsc -d -p . -w
 
-test:
-	tsc test/*.ts
-	node test/*.js
+test: build
+	mocha test
 
-publish:
-	make test
-	make build
+publish: test
 	npm publish

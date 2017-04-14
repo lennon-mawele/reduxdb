@@ -1,6 +1,6 @@
 {
   "name": "reduxdb",
-  "version": "3.0.1",
+  "version": "3.0.2",
   "repository": "github:wizawu/reduxdb",
   "main": "src/index.js",
   "types": "src/index.d.ts",
@@ -9,9 +9,7 @@
     "redux": "^3.6.0"
   },
   "devDependencies": {
-    "@types/chai": "^3.5.0",
     "@types/object-path": "^0.9.28",
-    "@types/redux": "^3.6.0",
-    "chai": "^3.5.0"
+    "@types/redux": "^3.6.0"
   }
 }
