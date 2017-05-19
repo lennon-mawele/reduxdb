@@ -1,7 +1,4 @@
 *.log
 *.swp
-.gradle
-build
-build.gradle
 node_modules
 yarn.lock

@@ -8,6 +8,3 @@ watch:
 
 test: build
 	mocha test
-
-publish: test
-	npm publish

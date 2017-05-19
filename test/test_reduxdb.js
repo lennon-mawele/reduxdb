@@ -1,5 +1,5 @@
 const { deepEqual, notEqual } = require("assert")
-const reduxdb = require("../src/index")
+const reduxdb = require("../dist/index")
 
 describe("reduxdb", () => {
     beforeEach(() => {
