@@ -1,9 +1,9 @@
 {
   "name": "reduxdb",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "repository": "github:wizawu/reduxdb",
-  "main": "src/index.js",
-  "types": "src/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "dependencies": {
     "object-path": "^0.11.4",
     "redux": "^3.6.0"
