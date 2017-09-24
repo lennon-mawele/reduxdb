@@ -49,7 +49,7 @@ export declare class DB {
     getCollectionNames(): string[];
     getName(): string;
     stats(): any;
-    subscribe(func: any): any;
+    subscribe(func: any, that?: any): any;
 }
 export declare function use(name: string): DB;
 export declare function drop(name: string): void;

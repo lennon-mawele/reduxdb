@@ -283,7 +283,8 @@ export class DB {
     constructor(name: string) {
         this.__name__ = name
         let reducer = redux.combineReducers({
-            all: (_, { ns, type, query, doc, options }) => {
+            all: (_, args: any) => {
+                let { ns, type, query, doc, options } = args
                 this.__collections__.forEach(collection => {
                     if (collection.getFullName() === ns) {
                         switch (type) {
@@ -347,8 +348,16 @@ export class DB {
         }
     }
 
-    subscribe(func: any): any {
-        return this.__store__.subscribe(func)
+    subscribe(func: any, that?: any): any {
+        let unsubscribe = this.__store__.subscribe(func)
+        if (that) {
+            that.__componentWillUnmount__ = that.componentWillUnmount || (_ => _)
+            that.componentWillUnmount = () => {
+                that.__componentWillUnmount__()
+                unsubscribe()
+            }
+        }
+        return unsubscribe
     }
 }
 

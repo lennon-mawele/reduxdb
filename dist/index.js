@@ -267,8 +267,8 @@ var DB = (function () {
         this.__collections__ = new util_1.Map();
         this.__name__ = name;
         var reducer = redux.combineReducers({
-            all: function (_, _a) {
-                var ns = _a.ns, type = _a.type, query = _a.query, doc = _a.doc, options = _a.options;
+            all: function (_, args) {
+                var ns = args.ns, type = args.type, query = args.query, doc = args.doc, options = args.options;
                 _this.__collections__.forEach(function (collection) {
                     if (collection.getFullName() === ns) {
                         switch (type) {
@@ -328,8 +328,16 @@ var DB = (function () {
             "ok": 1
         };
     };
-    DB.prototype.subscribe = function (func) {
-        return this.__store__.subscribe(func);
+    DB.prototype.subscribe = function (func, that) {
+        var unsubscribe = this.__store__.subscribe(func);
+        if (that) {
+            that.__componentWillUnmount__ = that.componentWillUnmount || (function (_) { return _; });
+            that.componentWillUnmount = function () {
+                that.__componentWillUnmount__();
+                unsubscribe();
+            };
+        }
+        return unsubscribe;
     };
     return DB;
 }());
